@@ -1,9 +1,9 @@
 /* Detail Dogs content adaptations for the Pixel Forge layout */
 :root {
-    --palette-red: #ff3f5f;
-    --palette-navy: #18344f;
-    --palette-blue: #2377b8;
-    --palette-teal: #63d6d0;
+    --palette-red: #ff1f4f;
+    --palette-navy: #071426;
+    --palette-blue: #006fe8;
+    --palette-teal: #18f0e4;
     --palette-glass: rgba(182, 194, 204, 0.12);
     --palette-glass-strong: rgba(201, 211, 218, 0.16);
     --cyan: var(--palette-teal);
@@ -11,30 +11,30 @@
     --purple: var(--palette-blue);
     --deep-purple: var(--palette-navy);
     --dark-bg: var(--palette-navy);
-    --card-bg: linear-gradient(135deg, rgba(218, 226, 232, 0.12), rgba(35, 119, 184, 0.2));
-    --card-border: rgba(99, 214, 208, 0.34);
-    --text-main: #f8fbff;
-    --text-muted: #c3d4dc;
+    --card-bg: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(0, 111, 232, 0.2));
+    --card-border: rgba(24, 240, 228, 0.38);
+    --text-main: #fbfdff;
+    --text-muted: #c1d0dc;
 }
 
 body {
     background:
-        linear-gradient(180deg, rgba(198, 207, 216, 0.2), rgba(126, 139, 151, 0.12) 44%, rgba(185, 195, 203, 0.11)),
-        radial-gradient(circle at 78% 4%, rgba(99, 214, 208, 0.34), transparent 34rem),
-        radial-gradient(circle at 4% 42%, rgba(255, 63, 95, 0.28), transparent 32rem),
-        radial-gradient(circle at 78% 72%, rgba(35, 119, 184, 0.48), transparent 36rem),
-        linear-gradient(180deg, #1b2d41 0%, #152638 48%, #1b2d41 100%);
+        linear-gradient(180deg, rgba(185, 195, 205, 0.16), rgba(74, 88, 102, 0.1) 44%, rgba(157, 169, 179, 0.08)),
+        radial-gradient(circle at 78% 4%, rgba(24, 240, 228, 0.38), transparent 34rem),
+        radial-gradient(circle at 4% 42%, rgba(255, 31, 79, 0.34), transparent 32rem),
+        radial-gradient(circle at 78% 72%, rgba(0, 111, 232, 0.6), transparent 36rem),
+        linear-gradient(180deg, #071426 0%, #050b16 48%, #071426 100%);
 }
 
 nav {
-    background: rgba(34, 49, 63, 0.76);
-    border-bottom-color: rgba(205, 219, 226, 0.22);
-    box-shadow: 0 18px 44px rgba(8, 18, 30, 0.18);
+    background: rgba(7, 20, 38, 0.84);
+    border-bottom-color: rgba(24, 240, 228, 0.2);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
 }
 
 .logo {
     text-decoration: none;
-    background: linear-gradient(135deg, var(--palette-teal), #f8fbff 48%, var(--palette-red));
+    background: linear-gradient(135deg, var(--palette-teal), #fbfdff 44%, var(--palette-red));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -48,8 +48,8 @@ nav {
 .generate-btn {
     text-decoration: none;
     border-color: rgba(255, 255, 255, 0.28);
-    background: linear-gradient(135deg, rgba(255, 63, 95, 0.95), rgba(35, 119, 184, 0.88));
-    color: #f8fbff;
+    background: linear-gradient(135deg, rgba(255, 31, 79, 0.98), rgba(0, 111, 232, 0.92));
+    color: #fbfdff;
 }
 
 .nav-cta:hover,
@@ -58,18 +58,18 @@ nav {
 .cta-btn-primary:hover,
 .cta-btn-secondary:hover,
 .generate-btn:hover {
-    border-color: rgba(99, 214, 208, 0.72);
+    border-color: rgba(24, 240, 228, 0.72);
     background: linear-gradient(135deg, var(--palette-red), var(--palette-teal));
-    box-shadow: 0 14px 34px rgba(255, 63, 95, 0.26), 0 0 28px rgba(99, 214, 208, 0.16);
+    box-shadow: 0 14px 36px rgba(255, 31, 79, 0.34), 0 0 34px rgba(24, 240, 228, 0.2);
 }
 
 .hero-badge,
 .service-pill,
 .filter-tab,
 .popular-badge {
-    border-color: rgba(255, 63, 95, 0.42);
-    background: linear-gradient(135deg, rgba(255, 63, 95, 0.14), rgba(218, 226, 232, 0.08));
-    color: #f8fbff;
+    border-color: rgba(255, 31, 79, 0.48);
+    background: linear-gradient(135deg, rgba(255, 31, 79, 0.16), rgba(226, 233, 238, 0.07));
+    color: #fbfdff;
 }
 
 .section-title span,
@@ -82,7 +82,7 @@ nav {
 
 .hero h1 .line-2,
 .stat-number {
-    background: linear-gradient(90deg, var(--palette-teal), #f8fbff 42%, #ff9aaa 62%, var(--palette-red));
+    background: linear-gradient(90deg, var(--palette-teal), #fbfdff 40%, #ffb4c1 58%, var(--palette-red));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -94,17 +94,17 @@ nav {
 .faq-question:hover,
 .filter-tab:hover,
 .filter-tab.active {
-    border-color: rgba(99, 214, 208, 0.62);
+    border-color: rgba(24, 240, 228, 0.68);
 }
 
 .feature-card:nth-child(1),
 .feature-card:nth-child(5) {
-    border-color: rgba(99, 214, 208, 0.46);
+    border-color: rgba(24, 240, 228, 0.48);
 }
 
 .feature-card:nth-child(3),
 .feature-card.highlight {
-    border-color: rgba(255, 63, 95, 0.52);
+    border-color: rgba(255, 31, 79, 0.58);
 }
 
 .price-card.popular,
@@ -171,7 +171,7 @@ nav {
     gap: 0.6rem;
     padding: 1rem;
     border: 1px solid rgba(205, 219, 226, 0.22);
-    background: linear-gradient(135deg, rgba(218, 226, 232, 0.12), rgba(35, 119, 184, 0.18));
+    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(0, 111, 232, 0.2));
     font-family: 'Space Mono', monospace;
     font-size: 0.86rem;
     color: var(--text-main);
@@ -204,8 +204,8 @@ nav {
     max-width: 860px;
     margin: 0 auto 3rem;
     padding: 2rem;
-    border: 1px solid rgba(255, 63, 95, 0.38);
-    background: linear-gradient(135deg, rgba(218, 226, 232, 0.12), rgba(255, 63, 95, 0.14), rgba(35, 119, 184, 0.18));
+    border: 1px solid rgba(255, 31, 79, 0.44);
+    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 31, 79, 0.16), rgba(0, 111, 232, 0.2));
 }
 
 .review-quote p {
@@ -226,8 +226,8 @@ nav {
     max-width: 980px;
     margin-bottom: 2.5rem;
     padding: 2rem;
-    border: 1px solid rgba(255, 63, 95, 0.38);
-    background: linear-gradient(135deg, rgba(218, 226, 232, 0.12), rgba(255, 63, 95, 0.14), rgba(35, 119, 184, 0.18));
+    border: 1px solid rgba(255, 31, 79, 0.44);
+    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 31, 79, 0.16), rgba(0, 111, 232, 0.2));
 }
 
 .featured-review-panel p {
@@ -322,7 +322,7 @@ nav {
     width: 100%;
     padding: 1.25rem;
     border: 1px solid rgba(205, 219, 226, 0.22);
-    background: linear-gradient(135deg, rgba(218, 226, 232, 0.12), rgba(35, 119, 184, 0.18));
+    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(0, 111, 232, 0.2));
 }
 
 .booking-form label {
@@ -339,8 +339,8 @@ nav {
 .booking-form input,
 .booking-form textarea {
     width: 100%;
-    border: 1px solid rgba(99, 214, 208, 0.26);
-    background: rgba(31, 45, 58, 0.56);
+    border: 1px solid rgba(24, 240, 228, 0.24);
+    background: rgba(7, 20, 38, 0.62);
     color: var(--text-main);
     padding: 0.85rem;
     font: inherit;
@@ -351,7 +351,7 @@ nav {
 
 .booking-form input:focus,
 .booking-form textarea:focus {
-    outline: 2px solid rgba(99, 214, 208, 0.5);
+    outline: 2px solid rgba(24, 240, 228, 0.54);
     outline-offset: 1px;
 }
 
@@ -423,7 +423,7 @@ nav {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(99, 214, 208, 0.18), transparent 42%, rgba(255, 63, 95, 0.13));
+    background: linear-gradient(135deg, rgba(24, 240, 228, 0.2), transparent 42%, rgba(255, 31, 79, 0.15));
     opacity: 0;
     transition: opacity 0.25s ease;
 }
@@ -469,7 +469,7 @@ nav {
     position: relative;
     min-height: 420px;
     overflow: hidden;
-    background: rgba(31, 45, 58, 0.58);
+    background: rgba(7, 20, 38, 0.62);
 }
 
 .before-after-image {
@@ -500,7 +500,7 @@ nav {
     left: var(--split);
     width: 2px;
     background: var(--palette-teal);
-    box-shadow: 0 0 20px rgba(99, 214, 208, 0.82);
+    box-shadow: 0 0 22px rgba(24, 240, 228, 0.86);
 }
 
 .before-after-handle::after {
@@ -510,8 +510,8 @@ nav {
     left: 50%;
     width: 42px;
     height: 42px;
-    border: 1px solid rgba(99, 214, 208, 0.78);
-    background: rgba(31, 45, 58, 0.9);
+    border: 1px solid rgba(24, 240, 228, 0.8);
+    background: rgba(7, 20, 38, 0.92);
     transform: translate(-50%, -50%) rotate(45deg);
 }
 
@@ -589,8 +589,8 @@ nav {
     align-items: center;
     margin-top: 2.5rem;
     padding: 1.5rem;
-    border: 1px solid rgba(255, 63, 95, 0.38);
-    background: linear-gradient(135deg, rgba(218, 226, 232, 0.12), rgba(255, 63, 95, 0.14), rgba(35, 119, 184, 0.18));
+    border: 1px solid rgba(255, 31, 79, 0.44);
+    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 31, 79, 0.16), rgba(0, 111, 232, 0.2));
 }
 
 .membership-policy-list {
@@ -611,8 +611,8 @@ nav {
 }
 
 .service-pill {
-    border: 1px solid rgba(255, 63, 95, 0.38);
-    background: linear-gradient(135deg, rgba(255, 63, 95, 0.14), rgba(218, 226, 232, 0.08));
+    border: 1px solid rgba(255, 31, 79, 0.44);
+    background: linear-gradient(135deg, rgba(255, 31, 79, 0.16), rgba(226, 233, 238, 0.07));
     color: var(--text-main);
     font-family: 'Space Mono', monospace;
     font-size: 0.72rem;
