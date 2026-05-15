@@ -1,0 +1,18 @@
+{
+  "businessName": "Detail Dogs",
+  "source": "Google Business Profile",
+  "profileUrl": "https://www.google.com/search?sca_esv=be715597135c0019&hl=en&gl=us&authuser=2&output=search&q=Detail+Dogs&ludocid=468973801551960018&lsig=AB86z5WJyIPpRjtqM8EE9599bLKC&ved=1i%3A3%2Ct%3A109124%2Ce%3A2%2Cp%3AgCcGat_LMp6viLMPt8G2uAg%3A52",
+  "updatedAt": "2026-05-14",
+  "rating": null,
+  "reviewCount": null,
+  "reviews": [
+    {
+      "author": "Jude Outerbridge",
+      "rating": 5,
+      "relativeTimeDescription": "",
+      "category": "Commercial Vehicle Review",
+      "text": "This truck looks like it's a 2021 after Detail Dogs got done with it. Insane work! 10/10.",
+      "source": "Google"
+    }
+  ]
+}

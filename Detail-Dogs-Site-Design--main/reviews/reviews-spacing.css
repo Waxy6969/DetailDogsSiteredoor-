@@ -1,0 +1,135 @@
+.reviews-page {
+    padding-top: 7.5rem;
+}
+
+.reviews-page .subpage-hero {
+    gap: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.reviews-page .subpage-hero h1 {
+    max-width: 960px;
+    font-size: clamp(3.6rem, 10vw, 6.8rem);
+}
+
+.reviews-page .featured-review-panel {
+    margin-bottom: 2.75rem;
+    padding: clamp(1.4rem, 2.5vw, 2rem);
+}
+
+.reviews-page .featured-review-panel p {
+    font-size: clamp(2rem, 5vw, 3.8rem);
+}
+
+.reviews-page .review-section-block {
+    display: grid;
+    gap: 1.4rem;
+    margin-bottom: 2.75rem;
+}
+
+.reviews-page .review-section-heading {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+}
+
+.reviews-page .review-section-heading h2 {
+    max-width: 760px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 5.8vw, 3.35rem);
+    line-height: 1;
+    letter-spacing: 1px;
+    margin-top: 0.55rem;
+}
+
+.reviews-page .google-review-section {
+    gap: 1.5rem;
+}
+
+.reviews-page .google-review-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 1rem 2rem;
+}
+
+.reviews-page .google-review-heading h2 {
+    max-width: none;
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.45rem, 2.6vw, 2.15rem);
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.reviews-page .review-source-link {
+    justify-self: end;
+    min-width: 180px;
+    text-align: center;
+}
+
+.reviews-page .google-review-card {
+    display: grid;
+    gap: 1.1rem;
+    padding: clamp(1.25rem, 2.2vw, 1.75rem);
+}
+
+.reviews-page .google-card-top {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.reviews-page .google-review-card p,
+.reviews-page .google-review-card strong,
+.reviews-page .review-sync-note {
+    margin: 0;
+}
+
+.reviews-page .review-card {
+    min-height: 180px;
+}
+
+.reviews-page .review-card.large {
+    min-height: 280px;
+}
+
+.reviews-page .review-category-grid {
+    margin-top: 0;
+}
+
+.reviews-page .gallery-cta-panel {
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .reviews-page {
+        padding-top: 7rem;
+    }
+
+    .reviews-page .subpage-hero {
+        margin-bottom: 1.5rem;
+    }
+
+    .reviews-page .featured-review-panel {
+        padding: 1.1rem;
+    }
+
+    .reviews-page .google-review-heading {
+        grid-template-columns: 1fr;
+        align-items: start;
+    }
+
+    .reviews-page .review-source-link {
+        justify-self: start;
+        min-width: 0;
+        width: auto;
+    }
+
+    .reviews-page .google-card-top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}

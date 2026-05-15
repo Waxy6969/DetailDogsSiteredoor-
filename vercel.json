@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://detaildogs.vercel.app",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "destination": "https://detaildogs.vercel.app/:path*",
+      "permanent": true
+    }
+  ]
+}

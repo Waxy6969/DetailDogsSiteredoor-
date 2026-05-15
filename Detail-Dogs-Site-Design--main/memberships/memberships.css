@@ -1,0 +1,101 @@
+.membership-intro-panel {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(205, 219, 226, 0.24);
+    background: linear-gradient(135deg, rgba(218, 226, 232, 0.12), rgba(255, 63, 95, 0.14), rgba(35, 119, 184, 0.18));
+}
+
+.membership-intro-panel h2,
+.membership-pack-card h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    line-height: 0.92;
+    letter-spacing: 1px;
+    color: var(--text-main);
+    margin-top: 0.75rem;
+}
+
+.membership-intro-panel p,
+.membership-pack-card p,
+.membership-final-cta p {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.membership-pack-grid,
+.membership-section-grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.membership-pack-grid,
+.membership-section-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.membership-pack-card {
+    display: grid;
+    gap: 1rem;
+    min-height: 520px;
+    padding: 1.5rem;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-main);
+    position: relative;
+    overflow: hidden;
+}
+
+.membership-pack-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(218, 226, 232, 0.12), transparent 42%, rgba(255, 63, 95, 0.13));
+    opacity: 0.7;
+}
+
+.membership-pack-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.membership-pack-card-featured {
+    border-color: rgba(255, 63, 95, 0.42);
+    background: linear-gradient(135deg, rgba(218, 226, 232, 0.12), rgba(255, 63, 95, 0.14), rgba(35, 119, 184, 0.18));
+}
+
+.membership-pack-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+}
+
+.membership-pack-top strong {
+    color: var(--palette-teal);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    line-height: 0.9;
+    white-space: nowrap;
+}
+
+.membership-final-cta {
+    align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+    .membership-pack-grid,
+    .membership-section-grid,
+    .membership-intro-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .membership-pack-top {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
