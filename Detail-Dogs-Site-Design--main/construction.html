@@ -101,13 +101,12 @@
 
         .admin-form {
             position: absolute;
-            left: 50%;
-            bottom: 0.9%;
+            top: 1.2rem;
+            right: 1.2rem;
             z-index: 2;
             display: grid;
             gap: 0.2rem;
             width: min(320px, 62%);
-            transform: translateX(-50%);
             font-family: Arial, Helvetica, sans-serif;
         }
 
@@ -179,8 +178,9 @@
             }
 
             .admin-form {
-                bottom: 1%;
-                width: min(315px, 88%);
+                top: 0.75rem;
+                right: 0.75rem;
+                width: min(315px, calc(100% - 1.5rem));
             }
 
             .admin-row {
