@@ -116,16 +116,19 @@
         .bottom-text-sheen::before {
             content: "";
             position: absolute;
-            inset: -20% -35%;
+            top: 5%;
+            bottom: 8%;
+            left: -35%;
+            right: -35%;
             background: linear-gradient(105deg,
                 transparent 0%,
-                rgba(255, 31, 79, 0) 33%,
-                rgba(255, 31, 79, 0.42) 43%,
-                rgba(255, 255, 255, 0.75) 50%,
-                rgba(22, 137, 255, 0.5) 58%,
-                rgba(22, 137, 255, 0) 67%,
+                rgba(255, 31, 79, 0) 39%,
+                rgba(255, 31, 79, 0.34) 46%,
+                rgba(255, 255, 255, 0.66) 50%,
+                rgba(22, 137, 255, 0.4) 54%,
+                rgba(22, 137, 255, 0) 61%,
                 transparent 100%);
-            filter: blur(1px);
+            filter: blur(0.5px);
             transform: translateX(-70%) skewX(-14deg);
             animation: bottomTextSheen 4.8s ease-in-out infinite;
         }
