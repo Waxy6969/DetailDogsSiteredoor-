@@ -92,3 +92,20 @@ If a deployment does not refresh automatically:
 1. Open the deployment in Vercel.
 2. Click **Redeploy**.
 3. Choose **Use existing Build Cache** (fast) or **Without Build Cache** (clean rebuild).
+
+## Git Gallery Photos
+
+Gallery photos are checked into the repo under:
+
+`images/gallery/drive/`
+
+They are organized by type:
+
+- `featured`
+- `interior`
+- `exterior`
+- `paint-correction`
+- `ceramic`
+- `shop`
+
+The site reads `images/gallery/drive-gallery.json` to render the home gallery preview and gallery page. When adding or removing checked-in photos, update that manifest so the pages point to the right files.
