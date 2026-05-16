@@ -79,6 +79,7 @@
             position: absolute;
             top: 78.2%;
             height: 9.6%;
+            z-index: 3;
             border: 0;
             outline-offset: 4px;
             color: transparent;
@@ -99,11 +100,74 @@
             width: 24.4%;
         }
 
+        .bottom-text-sheen {
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            bottom: 2.2%;
+            z-index: 1;
+            height: 10.6%;
+            overflow: hidden;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            opacity: 0.95;
+        }
+
+        .bottom-text-sheen::before {
+            content: "";
+            position: absolute;
+            inset: -20% -35%;
+            background: linear-gradient(105deg,
+                transparent 0%,
+                rgba(255, 31, 79, 0) 33%,
+                rgba(255, 31, 79, 0.42) 43%,
+                rgba(255, 255, 255, 0.75) 50%,
+                rgba(22, 137, 255, 0.5) 58%,
+                rgba(22, 137, 255, 0) 67%,
+                transparent 100%);
+            filter: blur(1px);
+            transform: translateX(-70%) skewX(-14deg);
+            animation: bottomTextSheen 4.8s ease-in-out infinite;
+        }
+
+        .bottom-text-sheen::after {
+            content: "";
+            position: absolute;
+            inset: 20% 0 8%;
+            background:
+                radial-gradient(circle at 17% 52%, rgba(255, 31, 79, 0.4), transparent 12%),
+                radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.22), transparent 14%),
+                radial-gradient(circle at 82% 52%, rgba(22, 137, 255, 0.38), transparent 14%);
+            animation: bottomTextPulse 2.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes bottomTextSheen {
+            0%,
+            18% {
+                transform: translateX(-78%) skewX(-14deg);
+            }
+
+            60%,
+            100% {
+                transform: translateX(78%) skewX(-14deg);
+            }
+        }
+
+        @keyframes bottomTextPulse {
+            from {
+                opacity: 0.35;
+            }
+
+            to {
+                opacity: 0.85;
+            }
+        }
+
         .admin-form {
             position: absolute;
             top: 1.2rem;
             right: 1.2rem;
-            z-index: 2;
+            z-index: 4;
             display: grid;
             gap: 0.2rem;
             width: min(320px, 62%);
@@ -159,10 +223,17 @@
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
         }
 
-        @media (max-aspect-ratio: 1404 / 1123) {
+        @media (max-aspect-ratio: 1402 / 1122) {
             .construction-stage {
                 width: calc(100svh * var(--poster-ratio));
                 height: 100svh;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .bottom-text-sheen::before,
+            .bottom-text-sheen::after {
+                animation: none;
             }
         }
 
@@ -204,6 +275,7 @@
         </div>
         <a class="hotspot hotspot-call" href="tel:+14849260606">Call Now</a>
         <a class="hotspot hotspot-email" href="mailto:detaildogsllc@gmail.com?subject=Detail%20Dogs%20Service%20Request">Email Us</a>
+        <div class="bottom-text-sheen" aria-hidden="true"></div>
         <form class="admin-form" id="admin-form" autocomplete="off">
             <div class="admin-row">
                 <input class="admin-field" id="admin-password" name="password" type="password" placeholder="Admin password" aria-label="Admin password" required>
