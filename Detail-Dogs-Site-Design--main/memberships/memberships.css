@@ -6,7 +6,7 @@
     margin-bottom: 2rem;
     padding: 1.5rem;
     border: 1px solid rgba(205, 219, 226, 0.24);
-    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 31, 79, 0.16), rgba(0, 111, 232, 0.2));
+    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 31, 79, 0.16), rgba(255, 122, 0, 0.1), rgba(0, 111, 232, 0.2));
 }
 
 .membership-intro-panel h2,
@@ -54,7 +54,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), transparent 42%, rgba(255, 31, 79, 0.15));
+    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 122, 0, 0.1) 46%, rgba(255, 31, 79, 0.15));
     opacity: 0.7;
 }
 
@@ -65,7 +65,7 @@
 
 .membership-pack-card-featured {
     border-color: rgba(255, 31, 79, 0.48);
-    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 31, 79, 0.16), rgba(0, 111, 232, 0.2));
+    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 31, 79, 0.16), rgba(255, 122, 0, 0.12), rgba(0, 111, 232, 0.2));
 }
 
 .membership-pack-top {
