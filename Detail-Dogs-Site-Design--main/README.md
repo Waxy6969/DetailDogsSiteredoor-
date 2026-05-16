@@ -109,3 +109,7 @@ They are organized by type:
 - `shop`
 
 The site reads `images/gallery/drive-gallery.json` to render the home gallery preview and gallery page. When adding or removing checked-in photos, update that manifest so the pages point to the right files.
+
+Creative site assets that should not appear in the gallery, such as logos and construction artwork, live under:
+
+`images/assets/`

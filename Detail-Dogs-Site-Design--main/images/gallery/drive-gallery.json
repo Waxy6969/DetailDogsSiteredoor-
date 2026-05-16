@@ -2,8 +2,8 @@
     "source":  "git-gallery-folder",
     "sourceUrl":  "https://drive.google.com/drive/folders/1wHo2xswpn_xg0FymDW1l2PQrj06l2Hft?usp=sharing",
     "folderId":  "1wHo2xswpn_xg0FymDW1l2PQrj06l2Hft",
-    "updatedAt":  "2026-05-16T21:59:38.5439781Z",
-    "imageCount":  13,
+    "updatedAt":  "2026-05-16T22:07:15.0815064Z",
+    "imageCount":  12,
     "images":  [
                    {
                        "id":  "1FDrPNgX3Uawyr0J7aaQEIcz5H854p5ck",
@@ -112,18 +112,6 @@
                        "mimeType":  "image/jpeg",
                        "modifiedTime":  "2026-04-24T19:51:20.000Z",
                        "size":  8395791
-                   },
-                   {
-                       "id":  "1Zi13d62FZGvfonhwSaG7NXRTxON_2s1C",
-                       "name":  "detail dogs logo.jpg",
-                       "title":  "detail dogs logo",
-                       "category":  "shop",
-                       "alt":  "detail dogs logo - Detail Dogs gallery photo",
-                       "fileName":  "detail-dogs-logo-1Zi13d62.jpg",
-                       "src":  "/images/gallery/drive/shop/detail-dogs-logo-1Zi13d62.jpg",
-                       "mimeType":  "image/jpeg",
-                       "modifiedTime":  "2026-04-11T18:16:50.000Z",
-                       "size":  2058171
                    },
                    {
                        "id":  "1Px8lZ58JkuOrhcl5zsWhUtwkg01dBHJ5",
