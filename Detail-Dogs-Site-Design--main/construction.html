@@ -9,6 +9,8 @@
     <style>
         :root {
             --poster-ratio: 1402 / 1122;
+            --desktop-poster: url("images/assets/construction-poster.png");
+            --mobile-poster: url("images/assets/construction-poster-mobile.png");
             --red: #ff1f4f;
             --blue: #1689ff;
             --text: #fbfdff;
@@ -29,7 +31,7 @@
             min-height: 100svh;
             background:
                 linear-gradient(rgba(3, 8, 18, 0.12), rgba(3, 8, 18, 0.12)),
-                url("images/assets/construction-poster.png") center / cover no-repeat;
+                var(--desktop-poster) center / cover no-repeat;
             color: var(--text);
             overflow: hidden;
             font-family: Arial, Helvetica, sans-serif;
@@ -61,6 +63,12 @@
             object-fit: contain;
             user-select: none;
             -webkit-user-drag: none;
+        }
+
+        .construction-stage > picture {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
         .sr-only {
@@ -180,8 +188,15 @@
             }
         }
 
-        @media (max-width: 560px) {
+        @media (max-width: 700px) {
+            :root {
+                --poster-ratio: 941 / 1672;
+            }
+
             body {
+                background:
+                    linear-gradient(rgba(3, 8, 18, 0.08), rgba(3, 8, 18, 0.08)),
+                    var(--mobile-poster) center / cover no-repeat;
                 overflow: hidden;
                 align-items: center;
             }
@@ -191,12 +206,36 @@
                 height: 100svh;
             }
 
+            .hotspot {
+                top: 69.2%;
+                height: 6.7%;
+            }
+
+            .hotspot-call {
+                left: 12.4%;
+                width: 33.4%;
+            }
+
+            .hotspot-email {
+                left: 49.4%;
+                width: 33.6%;
+            }
+
+            .bottom-text-sheen {
+                left: 7%;
+                right: 7%;
+                bottom: 1.9%;
+                height: 8.5%;
+            }
         }
     </style>
 </head>
 <body>
     <main class="construction-stage" aria-labelledby="construction-title">
-        <img class="construction-poster" src="images/assets/construction-poster.png" alt="" aria-hidden="true">
+        <picture>
+            <source media="(max-width: 700px)" srcset="images/assets/construction-poster-mobile.png">
+            <img class="construction-poster" src="images/assets/construction-poster.png" alt="" aria-hidden="true">
+        </picture>
         <div class="sr-only">
             <h1 id="construction-title">Site Under Construction</h1>
             <p>We are finishing up the new site. You can still call or email Detail Dogs LLC to book service or ask a question.</p>
