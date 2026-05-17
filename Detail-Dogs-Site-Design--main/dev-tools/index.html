@@ -36,7 +36,7 @@
         .dev-shell {
             display: grid;
             min-height: 100svh;
-            grid-template-rows: auto 1fr;
+            grid-template-rows: auto auto 1fr;
         }
 
         [hidden] {
@@ -176,6 +176,57 @@
             align-items: center;
         }
 
+        .upload-panel {
+            display: grid;
+            grid-template-columns: auto minmax(160px, 220px) minmax(220px, 1fr) auto;
+            gap: 0.75rem;
+            align-items: end;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(7, 13, 26, 0.78);
+        }
+
+        .upload-field {
+            display: grid;
+            gap: 0.35rem;
+            min-width: 0;
+        }
+
+        .upload-field span,
+        .upload-status {
+            color: var(--muted);
+            font-size: 0.76rem;
+            line-height: 1.35;
+        }
+
+        .upload-field select,
+        .upload-field input[type="file"] {
+            min-height: 40px;
+            min-width: 0;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            font: 700 0.84rem Arial, Helvetica, sans-serif;
+            padding: 0.5rem 0.65rem;
+        }
+
+        .upload-field select option {
+            color: #050914;
+        }
+
+        .upload-status {
+            grid-column: 1 / -1;
+            min-height: 1rem;
+        }
+
+        .upload-status.good {
+            color: #85f2bd;
+        }
+
+        .upload-status.bad {
+            color: #ff9aaa;
+        }
+
         button,
         .dev-link {
             min-height: 40px;
@@ -230,6 +281,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .upload-panel {
+                grid-template-columns: 1fr;
+            }
+
             .dev-actions {
                 justify-content: space-between;
             }
@@ -269,6 +324,27 @@
                 <a class="dev-link" href="/">Exit</a>
             </div>
         </header>
+        <form class="upload-panel" id="galleryUploadForm">
+            <strong class="dev-title">Gallery Upload</strong>
+            <label class="upload-field">
+                <span>Photo type</span>
+                <select id="galleryCategory" name="category">
+                    <option value="featured">Featured</option>
+                    <option value="interior">Interior</option>
+                    <option value="exterior">Exterior</option>
+                    <option value="paint-correction">Paint Correction</option>
+                    <option value="ceramic">Ceramic</option>
+                    <option value="headlights">Headlights</option>
+                    <option value="shop">Shop / Behind the Scenes</option>
+                </select>
+            </label>
+            <label class="upload-field">
+                <span>Photos</span>
+                <input id="galleryFiles" name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+            </label>
+            <button id="galleryUploadButton" type="submit">Upload</button>
+            <p class="upload-status" id="galleryUploadStatus" aria-live="polite">Uploads are saved into the GitHub gallery folder and added to the manifest.</p>
+        </form>
         <section class="preview-zone" aria-label="Site preview">
             <div class="preview-frame-wrap" id="previewWrap">
                 <iframe id="previewFrame" title="Detail Dogs site preview"></iframe>
@@ -290,6 +366,11 @@
         const webMode = document.getElementById('webMode');
         const mobileMode = document.getElementById('mobileMode');
         const refreshPreview = document.getElementById('refreshPreview');
+        const galleryUploadForm = document.getElementById('galleryUploadForm');
+        const galleryCategory = document.getElementById('galleryCategory');
+        const galleryFiles = document.getElementById('galleryFiles');
+        const galleryUploadButton = document.getElementById('galleryUploadButton');
+        const galleryUploadStatus = document.getElementById('galleryUploadStatus');
         const params = new URLSearchParams(window.location.search);
 
         function isAdmin() {
@@ -331,6 +412,65 @@
             previewFrame.src = target;
         }
 
+        function setUploadStatus(message, type = '') {
+            galleryUploadStatus.textContent = message;
+            galleryUploadStatus.classList.toggle('good', type === 'good');
+            galleryUploadStatus.classList.toggle('bad', type === 'bad');
+        }
+
+        function readImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const image = new Image();
+                    image.onload = () => resolve(image);
+                    image.onerror = reject;
+                    image.src = reader.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const result = String(reader.result || '');
+                    resolve(result.includes(',') ? result.split(',')[1] : result);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        async function prepareImage(file) {
+            const image = await readImage(file);
+            const maxDimension = 2200;
+            const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+            const width = Math.max(1, Math.round(image.naturalWidth * scale));
+            const height = Math.max(1, Math.round(image.naturalHeight * scale));
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const context = canvas.getContext('2d');
+            context.fillStyle = '#050914';
+            context.fillRect(0, 0, width, height);
+            context.drawImage(image, 0, 0, width, height);
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.86));
+
+            if (!blob) throw new Error(`Could not prepare ${file.name}.`);
+
+            return {
+                fileName: file.name.replace(/\.[a-z0-9]+$/i, '.jpg'),
+                title: file.name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').trim(),
+                alt: `${file.name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').trim()} - Detail Dogs gallery photo`,
+                mimeType: 'image/jpeg',
+                size: blob.size,
+                base64: await blobToBase64(blob)
+            };
+        }
+
         function showLogin() {
             devLogin.hidden = false;
             devShell.hidden = true;
@@ -350,6 +490,56 @@
         refreshPreview.addEventListener('click', loadPreview);
         targetInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') loadPreview();
+        });
+
+        galleryUploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const files = Array.from(galleryFiles.files || []);
+            if (!files.length) {
+                setUploadStatus('Choose one or more photos first.', 'bad');
+                return;
+            }
+
+            if (files.length > 6) {
+                setUploadStatus('Upload 6 photos or fewer at a time.', 'bad');
+                return;
+            }
+
+            galleryUploadButton.disabled = true;
+            setUploadStatus(`Preparing ${files.length} photo${files.length === 1 ? '' : 's'}...`);
+
+            try {
+                const images = [];
+                for (const [index, file] of files.entries()) {
+                    setUploadStatus(`Preparing photo ${index + 1} of ${files.length}...`);
+                    images.push(await prepareImage(file));
+                }
+
+                setUploadStatus('Uploading to the gallery folder...');
+                const response = await fetch('/api/gallery-upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        category: galleryCategory.value,
+                        images
+                    })
+                });
+                const result = await response.json();
+
+                if (!response.ok || !result.ok) {
+                    throw new Error(result.error || 'Gallery upload failed.');
+                }
+
+                galleryFiles.value = '';
+                targetInput.value = '/gallery/';
+                loadPreview();
+                setUploadStatus(`${result.message} Vercel will redeploy from the new commit shortly.`, 'good');
+            } catch (error) {
+                setUploadStatus(error.message || 'Gallery upload failed.', 'bad');
+            } finally {
+                galleryUploadButton.disabled = false;
+            }
         });
 
         devPasswordToggle.addEventListener('click', () => {

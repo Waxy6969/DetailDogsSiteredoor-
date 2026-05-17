@@ -3,6 +3,18 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/dev-tools",
+      "destination": "/dev-tools/index.html"
+    },
+    {
+      "source": "/dev-tools/(.*)",
+      "destination": "/dev-tools/$1"
+    },
+    {
       "source": "/(.*)",
       "missing": [
         {
