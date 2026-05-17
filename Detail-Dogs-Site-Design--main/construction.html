@@ -244,5 +244,39 @@
         <a class="hotspot hotspot-email" href="mailto:detaildogsllc@gmail.com?subject=Detail%20Dogs%20Service%20Request">Email Us</a>
         <div class="bottom-text-sheen" aria-hidden="true"></div>
     </main>
+    <script>
+        (() => {
+            const devTarget = `/dev-tools?target=${encodeURIComponent('/')}`;
+            let cornerTapCount = 0;
+            let cornerTapTimer = 0;
+
+            function openDevTools() {
+                window.location.href = devTarget;
+            }
+
+            window.addEventListener('keydown', (event) => {
+                if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'd') {
+                    event.preventDefault();
+                    openDevTools();
+                }
+            });
+
+            window.addEventListener('pointerdown', (event) => {
+                const inTopRightCorner = event.clientX > window.innerWidth - 82 && event.clientY < 82;
+                if (!inTopRightCorner) return;
+
+                window.clearTimeout(cornerTapTimer);
+                cornerTapCount += 1;
+                cornerTapTimer = window.setTimeout(() => {
+                    cornerTapCount = 0;
+                }, 2200);
+
+                if (cornerTapCount >= 5) {
+                    cornerTapCount = 0;
+                    openDevTools();
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
