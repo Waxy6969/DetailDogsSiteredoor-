@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <script src="/scripts/construction-gate.js"></script>
+    <title>Admin Dev Tools | Detail Dogs LLC</title>
+    <style>
+        :root {
+            --red: #ff1f4f;
+            --blue: #1689ff;
+            --bg: #050914;
+            --panel: rgba(9, 17, 32, 0.9);
+            --line: rgba(255, 255, 255, 0.14);
+            --text: #fbfdff;
+            --muted: #a9b6c8;
+        }
+
+        * { box-sizing: border-box; }
+
+        html,
+        body {
+            min-height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(255, 31, 79, 0.22), transparent 28rem),
+                radial-gradient(circle at top right, rgba(22, 137, 255, 0.24), transparent 30rem),
+                var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .dev-shell {
+            display: grid;
+            min-height: 100svh;
+            grid-template-rows: auto 1fr;
+        }
+
+        .dev-bar {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(5, 9, 20, 0.92);
+            backdrop-filter: blur(16px);
+        }
+
+        .dev-title {
+            margin: 0;
+            font-size: 0.92rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .dev-target {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .dev-target input {
+            width: 100%;
+            min-height: 40px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            padding: 0 0.75rem;
+            font: 700 0.88rem Arial, Helvetica, sans-serif;
+            outline: none;
+        }
+
+        .dev-actions,
+        .mode-switch {
+            display: inline-flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        button,
+        .dev-link {
+            min-height: 40px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text);
+            cursor: pointer;
+            font: 800 0.76rem Arial, Helvetica, sans-serif;
+            padding: 0 0.85rem;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        button.active {
+            border-color: rgba(22, 137, 255, 0.86);
+            background: linear-gradient(135deg, rgba(255, 31, 79, 0.34), rgba(22, 137, 255, 0.46));
+            box-shadow: 0 0 18px rgba(22, 137, 255, 0.25);
+        }
+
+        .preview-zone {
+            display: grid;
+            place-items: center;
+            min-height: 0;
+            padding: 1rem;
+        }
+
+        .preview-frame-wrap {
+            width: min(100%, 1440px);
+            height: calc(100svh - 6rem);
+            border: 1px solid rgba(22, 137, 255, 0.38);
+            background: #02060d;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+            transition: width 180ms ease, height 180ms ease;
+        }
+
+        .preview-frame-wrap.mobile {
+            width: 390px;
+            max-width: 100%;
+            height: min(844px, calc(100svh - 6rem));
+        }
+
+        iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #fff;
+        }
+
+        @media (max-width: 800px) {
+            .dev-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .dev-actions {
+                justify-content: space-between;
+            }
+
+            .preview-zone {
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="dev-shell">
+        <header class="dev-bar">
+            <h1 class="dev-title">Admin Dev Tools</h1>
+            <label class="dev-target">
+                <span class="sr-only">Preview path</span>
+                <input id="targetPath" type="text" value="/" aria-label="Preview path">
+            </label>
+            <div class="dev-actions">
+                <div class="mode-switch" aria-label="Preview mode">
+                    <button id="webMode" type="button">Web</button>
+                    <button id="mobileMode" type="button">Mobile</button>
+                </div>
+                <button id="refreshPreview" type="button">Refresh</button>
+                <a class="dev-link" href="/">Exit</a>
+            </div>
+        </header>
+        <section class="preview-zone" aria-label="Site preview">
+            <div class="preview-frame-wrap" id="previewWrap">
+                <iframe id="previewFrame" title="Detail Dogs site preview"></iframe>
+            </div>
+        </section>
+    </main>
+    <script>
+        const targetInput = document.getElementById('targetPath');
+        const previewFrame = document.getElementById('previewFrame');
+        const previewWrap = document.getElementById('previewWrap');
+        const webMode = document.getElementById('webMode');
+        const mobileMode = document.getElementById('mobileMode');
+        const refreshPreview = document.getElementById('refreshPreview');
+        const params = new URLSearchParams(window.location.search);
+
+        function normalizePath(value) {
+            if (!value || value.startsWith('/dev-tools')) return '/';
+            if (value.startsWith('http')) {
+                try {
+                    const url = new URL(value);
+                    return `${url.pathname}${url.search}${url.hash}` || '/';
+                } catch (error) {
+                    return '/';
+                }
+            }
+            return value.startsWith('/') ? value : `/${value}`;
+        }
+
+        function setMode(mode) {
+            const nextMode = mode === 'mobile' ? 'mobile' : 'web';
+            previewWrap.classList.toggle('mobile', nextMode === 'mobile');
+            webMode.classList.toggle('active', nextMode === 'web');
+            mobileMode.classList.toggle('active', nextMode === 'mobile');
+            localStorage.setItem('ddDevPreviewMode', nextMode);
+        }
+
+        function loadPreview() {
+            const target = normalizePath(targetInput.value);
+            targetInput.value = target;
+            previewFrame.src = target;
+        }
+
+        targetInput.value = normalizePath(params.get('target') || '/');
+        setMode(localStorage.getItem('ddDevPreviewMode') || 'web');
+        loadPreview();
+
+        webMode.addEventListener('click', () => setMode('web'));
+        mobileMode.addEventListener('click', () => setMode('mobile'));
+        refreshPreview.addEventListener('click', loadPreview);
+        targetInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') loadPreview();
+        });
+    </script>
+</body>
+</html>
