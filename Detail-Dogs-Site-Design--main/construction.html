@@ -166,66 +166,6 @@
             }
         }
 
-        .admin-form {
-            position: absolute;
-            top: 1.2rem;
-            right: 1.2rem;
-            z-index: 4;
-            display: grid;
-            gap: 0.2rem;
-            width: min(320px, 62%);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        .admin-row {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            border: 1px solid rgba(255, 255, 255, 0.28);
-            background: rgba(3, 8, 18, 0.9);
-            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.44), inset 0 0 0 1px rgba(22, 137, 255, 0.22);
-        }
-
-        .admin-field {
-            min-width: 0;
-            min-height: 36px;
-            border: 0;
-            background: transparent;
-            color: var(--text);
-            font: 700 0.86rem Arial, Helvetica, sans-serif;
-            padding: 0.58rem 0.72rem;
-            outline: none;
-        }
-
-        .password-toggle,
-        .admin-submit {
-            min-height: 36px;
-            border: 0;
-            border-left: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--text);
-            cursor: pointer;
-            font: 800 0.76rem Arial, Helvetica, sans-serif;
-            padding: 0 0.78rem;
-            text-transform: uppercase;
-        }
-
-        .password-toggle {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .admin-submit {
-            background: linear-gradient(135deg, var(--red), var(--blue));
-        }
-
-        .admin-message {
-            min-height: 0.72rem;
-            margin: 0;
-            color: var(--muted);
-            font-size: 0.72rem;
-            line-height: 1.25;
-            text-align: center;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-        }
-
         @media (max-aspect-ratio: 1402 / 1122) {
             .construction-stage {
                 width: calc(100svh * var(--poster-ratio));
@@ -251,21 +191,6 @@
                 height: 100svh;
             }
 
-            .admin-form {
-                top: 0.75rem;
-                right: 0.75rem;
-                width: min(315px, calc(100% - 1.5rem));
-            }
-
-            .admin-row {
-                grid-template-columns: 1fr auto;
-            }
-
-            .admin-submit {
-                grid-column: 1 / -1;
-                border-left: 0;
-                border-top: 1px solid rgba(255, 255, 255, 0.2);
-            }
         }
     </style>
 </head>
@@ -279,58 +204,6 @@
         <a class="hotspot hotspot-call" href="tel:+14849260606">Call Now</a>
         <a class="hotspot hotspot-email" href="mailto:detaildogsllc@gmail.com?subject=Detail%20Dogs%20Service%20Request">Email Us</a>
         <div class="bottom-text-sheen" aria-hidden="true"></div>
-        <form class="admin-form" id="admin-form" autocomplete="off">
-            <div class="admin-row">
-                <input class="admin-field" id="admin-password" name="password" type="password" placeholder="Admin password" aria-label="Admin password" required>
-                <button class="password-toggle" id="password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button>
-                <button class="admin-submit" type="submit">Unlock</button>
-            </div>
-            <p class="admin-message" id="admin-message" aria-live="polite"></p>
-        </form>
     </main>
-    <script>
-        const adminForm = document.getElementById('admin-form');
-        const adminPassword = document.getElementById('admin-password');
-        const adminMessage = document.getElementById('admin-message');
-        const passwordToggle = document.getElementById('password-toggle');
-        const passwordHash = '721cb45b28c58f3723983ab5873dac52627acbafc4706f252646d9a1b591bca2';
-        const cookieValue = 'erv_zbSXx48qypXLMjxQk_umzVdhmEYXJGgjsU50IUs';
-
-        async function sha256(value) {
-            const bytes = new TextEncoder().encode(value);
-            const digest = await crypto.subtle.digest('SHA-256', bytes);
-            return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
-        }
-
-        function getNextPath() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('next') || '/';
-        }
-
-        passwordToggle.addEventListener('click', () => {
-            const isVisible = adminPassword.type === 'text';
-            adminPassword.type = isVisible ? 'password' : 'text';
-            passwordToggle.textContent = isVisible ? 'Show' : 'Hide';
-            passwordToggle.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
-            passwordToggle.setAttribute('aria-pressed', String(!isVisible));
-        });
-
-        adminForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            adminMessage.textContent = 'Checking password...';
-
-            const hash = await sha256(adminPassword.value);
-            if (hash !== passwordHash) {
-                adminMessage.textContent = 'Wrong password. Try again.';
-                adminPassword.select();
-                return;
-            }
-
-            const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
-            document.cookie = `dd_admin=${cookieValue}; Path=/; Max-Age=86400; SameSite=Lax${secureFlag}`;
-            adminMessage.textContent = 'Unlocked. Loading site...';
-            window.location.href = getNextPath();
-        });
-    </script>
 </body>
 </html>

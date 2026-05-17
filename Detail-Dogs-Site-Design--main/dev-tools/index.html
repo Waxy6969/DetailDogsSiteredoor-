@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <script src="/scripts/construction-gate.js"></script>
     <title>Admin Dev Tools | Detail Dogs LLC</title>
     <style>
         :root {
@@ -38,6 +37,85 @@
             display: grid;
             min-height: 100svh;
             grid-template-rows: auto 1fr;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        .dev-login {
+            display: grid;
+            min-height: 100svh;
+            place-items: center;
+            padding: 1rem;
+        }
+
+        .login-card {
+            width: min(100%, 430px);
+            border: 1px solid rgba(22, 137, 255, 0.42);
+            background: rgba(5, 9, 20, 0.86);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 31, 79, 0.14);
+            padding: 1.2rem;
+            backdrop-filter: blur(16px);
+        }
+
+        .login-card h1 {
+            margin: 0 0 0.45rem;
+            font-size: 1.05rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .login-card p {
+            margin: 0 0 1rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .admin-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .admin-field {
+            min-width: 0;
+            min-height: 42px;
+            border: 0;
+            background: transparent;
+            color: var(--text);
+            font: 700 0.9rem Arial, Helvetica, sans-serif;
+            padding: 0 0.8rem;
+            outline: none;
+        }
+
+        .password-toggle,
+        .admin-submit {
+            min-height: 42px;
+            border: 0;
+            border-left: 1px solid var(--line);
+            color: var(--text);
+            cursor: pointer;
+            font: 800 0.76rem Arial, Helvetica, sans-serif;
+            padding: 0 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .password-toggle {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-submit {
+            background: linear-gradient(135deg, var(--red), var(--blue));
+        }
+
+        .admin-message {
+            min-height: 1rem;
+            margin: 0.6rem 0 0;
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.35;
         }
 
         .dev-bar {
@@ -163,7 +241,19 @@
     </style>
 </head>
 <body>
-    <main class="dev-shell">
+    <section class="dev-login" id="devLogin" aria-labelledby="dev-login-title" hidden>
+        <form class="login-card" id="devLoginForm" autocomplete="off">
+            <h1 id="dev-login-title">Admin Dev Tools</h1>
+            <p>Enter the admin password to unlock the development preview controls.</p>
+            <div class="admin-row">
+                <input class="admin-field" id="devPassword" name="password" type="password" placeholder="Admin password" aria-label="Admin password" required>
+                <button class="password-toggle" id="devPasswordToggle" type="button" aria-label="Show password" aria-pressed="false">Show</button>
+                <button class="admin-submit" type="submit">Unlock</button>
+            </div>
+            <p class="admin-message" id="devLoginMessage" aria-live="polite"></p>
+        </form>
+    </section>
+    <main class="dev-shell" id="devShell" hidden>
         <header class="dev-bar">
             <h1 class="dev-title">Admin Dev Tools</h1>
             <label class="dev-target">
@@ -186,6 +276,14 @@
         </section>
     </main>
     <script>
+        const adminCookieValue = 'erv_zbSXx48qypXLMjxQk_umzVdhmEYXJGgjsU50IUs';
+        const passwordHash = '721cb45b28c58f3723983ab5873dac52627acbafc4706f252646d9a1b591bca2';
+        const devLogin = document.getElementById('devLogin');
+        const devShell = document.getElementById('devShell');
+        const devLoginForm = document.getElementById('devLoginForm');
+        const devPassword = document.getElementById('devPassword');
+        const devPasswordToggle = document.getElementById('devPasswordToggle');
+        const devLoginMessage = document.getElementById('devLoginMessage');
         const targetInput = document.getElementById('targetPath');
         const previewFrame = document.getElementById('previewFrame');
         const previewWrap = document.getElementById('previewWrap');
@@ -193,6 +291,18 @@
         const mobileMode = document.getElementById('mobileMode');
         const refreshPreview = document.getElementById('refreshPreview');
         const params = new URLSearchParams(window.location.search);
+
+        function isAdmin() {
+            return document.cookie.split(';').some((cookie) => {
+                return cookie.trim() === `dd_admin=${adminCookieValue}`;
+            });
+        }
+
+        async function sha256(value) {
+            const bytes = new TextEncoder().encode(value);
+            const digest = await crypto.subtle.digest('SHA-256', bytes);
+            return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+        }
 
         function normalizePath(value) {
             if (!value || value.startsWith('/dev-tools')) return '/';
@@ -221,9 +331,19 @@
             previewFrame.src = target;
         }
 
-        targetInput.value = normalizePath(params.get('target') || '/');
-        setMode(localStorage.getItem('ddDevPreviewMode') || 'web');
-        loadPreview();
+        function showLogin() {
+            devLogin.hidden = false;
+            devShell.hidden = true;
+            devPassword.focus();
+        }
+
+        function showTools() {
+            devLogin.hidden = true;
+            devShell.hidden = false;
+            targetInput.value = normalizePath(params.get('target') || '/');
+            setMode(localStorage.getItem('ddDevPreviewMode') || 'web');
+            loadPreview();
+        }
 
         webMode.addEventListener('click', () => setMode('web'));
         mobileMode.addEventListener('click', () => setMode('mobile'));
@@ -231,6 +351,37 @@
         targetInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') loadPreview();
         });
+
+        devPasswordToggle.addEventListener('click', () => {
+            const isVisible = devPassword.type === 'text';
+            devPassword.type = isVisible ? 'password' : 'text';
+            devPasswordToggle.textContent = isVisible ? 'Show' : 'Hide';
+            devPasswordToggle.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+            devPasswordToggle.setAttribute('aria-pressed', String(!isVisible));
+        });
+
+        devLoginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            devLoginMessage.textContent = 'Checking password...';
+
+            const hash = await sha256(devPassword.value);
+            if (hash !== passwordHash) {
+                devLoginMessage.textContent = 'Wrong password. Try again.';
+                devPassword.select();
+                return;
+            }
+
+            const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+            document.cookie = `dd_admin=${adminCookieValue}; Path=/; Max-Age=86400; SameSite=Lax${secureFlag}`;
+            devLoginMessage.textContent = 'Unlocked.';
+            showTools();
+        });
+
+        if (isAdmin()) {
+            showTools();
+        } else {
+            showLogin();
+        }
     </script>
 </body>
 </html>
