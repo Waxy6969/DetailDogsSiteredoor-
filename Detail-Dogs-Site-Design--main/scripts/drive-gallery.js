@@ -16,6 +16,20 @@
         shop: "Shop / Behind the Scenes"
     };
 
+    function isLocalPreview() {
+        return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+    }
+
+    function localGalleryImages() {
+        if (!isLocalPreview()) return [];
+        try {
+            const images = JSON.parse(localStorage.getItem("ddLocalGalleryImages") || "[]");
+            return Array.isArray(images) ? images : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
     function escapeHtml(value = "") {
         return String(value)
             .replaceAll("&", "&amp;")
@@ -93,7 +107,7 @@
         if (!response.ok) return;
 
         const manifest = await response.json();
-        const images = Array.isArray(manifest.images) ? manifest.images : [];
+        const images = [...localGalleryImages(), ...(Array.isArray(manifest.images) ? manifest.images : [])];
         if (!images.length) return;
 
         featureAreas.forEach((area) => {
@@ -107,7 +121,9 @@
             if (after) after.src = (images[1] || images[0]).src;
             if (after) after.alt = (images[1] || images[0]).alt || imageText(images[1] || images[0]);
             if (title) title.textContent = imageText(images[0]);
-            if (copy) copy.textContent = "Latest photos synced from the Detail Dogs Google Drive gallery folder.";
+            if (copy) copy.textContent = images[0].uploadedFrom === "local-dev-tools"
+                ? "Latest local preview upload from the Detail Dogs dev tools."
+                : "Latest photos synced from the Detail Dogs Google Drive gallery folder.";
         });
 
         galleryGrids.forEach((grid) => {

@@ -729,6 +729,77 @@
             galleryUploadStatus.classList.toggle('bad', type === 'bad');
         }
 
+        function galleryCategoryLabel(category) {
+            const option = Array.from(galleryCategory.options).find((item) => item.value === category);
+            return option ? option.textContent : 'Gallery';
+        }
+
+        function localGalleryUpload(category, images) {
+            if (!isLocalPreview()) return null;
+
+            const now = new Date().toISOString();
+            const current = JSON.parse(localStorage.getItem('ddLocalGalleryImages') || '[]');
+            const uploaded = images.map((image, index) => ({
+                id: `local-upload-${Date.now()}-${index + 1}`,
+                name: image.fileName || `Local upload ${index + 1}`,
+                title: image.title || `Local upload ${index + 1}`,
+                category,
+                alt: image.alt || `${image.title || 'Local upload'} - Detail Dogs gallery photo`,
+                fileName: image.fileName || `local-upload-${index + 1}.jpg`,
+                src: `data:${image.mimeType};base64,${image.base64}`,
+                mimeType: image.mimeType,
+                modifiedTime: now,
+                size: image.size,
+                uploadedFrom: 'local-dev-tools'
+            }));
+
+            try {
+                localStorage.setItem('ddLocalGalleryImages', JSON.stringify([...uploaded, ...current].slice(0, 18)));
+            } catch (error) {
+                throw new Error('Local browser storage is full. Try fewer photos, smaller photos, or upload from the live site after GITHUB_TOKEN is configured.');
+            }
+
+            return {
+                ok: true,
+                uploaded,
+                commit: 'local',
+                message: `Added ${uploaded.length} local preview photo${uploaded.length === 1 ? '' : 's'} to ${galleryCategoryLabel(category)}.`
+            };
+        }
+
+        async function submitGalleryUpload(category, images) {
+            let response;
+            try {
+                response = await fetch('/api/gallery-upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, images })
+                });
+            } catch (error) {
+                const localResult = localGalleryUpload(category, images);
+                if (localResult) return localResult;
+                throw error;
+            }
+
+            const responseText = await response.text();
+            let result = null;
+            try {
+                result = responseText ? JSON.parse(responseText) : null;
+            } catch (error) {
+                const localResult = localGalleryUpload(category, images);
+                if (localResult) return localResult;
+                throw new Error(responseText ? `Gallery upload API returned: ${responseText}` : 'Gallery upload API returned an empty response.');
+            }
+
+            if (!response.ok || !result || !result.ok) {
+                const localResult = response.status === 404 ? localGalleryUpload(category, images) : null;
+                if (localResult) return localResult;
+                throw new Error((result && result.error) || 'Gallery upload failed.');
+            }
+
+            return result;
+        }
+
         function setMiniStatus(element, message, type = '') {
             element.textContent = message;
             element.style.color = type === 'good' ? '#85f2bd' : type === 'bad' ? '#ff9aaa' : '';
@@ -1014,7 +1085,7 @@
 
         async function prepareImage(file) {
             const image = await readImage(file);
-            const maxDimension = 2200;
+            const maxDimension = isLocalPreview() ? 1400 : 2200;
             const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
             const width = Math.max(1, Math.round(image.naturalWidth * scale));
             const height = Math.max(1, Math.round(image.naturalHeight * scale));
@@ -1025,7 +1096,7 @@
             context.fillStyle = '#050914';
             context.fillRect(0, 0, width, height);
             context.drawImage(image, 0, 0, width, height);
-            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.86));
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', isLocalPreview() ? 0.78 : 0.86));
 
             if (!blob) throw new Error(`Could not prepare ${file.name}.`);
 
@@ -1093,24 +1164,15 @@
                 }
 
                 setUploadStatus('Uploading to the gallery folder...');
-                const response = await fetch('/api/gallery-upload', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        category: galleryCategory.value,
-                        images
-                    })
-                });
-                const result = await response.json();
-
-                if (!response.ok || !result.ok) {
-                    throw new Error(result.error || 'Gallery upload failed.');
-                }
+                const result = await submitGalleryUpload(galleryCategory.value, images);
 
                 galleryFiles.value = '';
                 targetInput.value = '/gallery/';
                 loadPreview();
-                setUploadStatus(`${result.message} Vercel will redeploy from the new commit shortly.`, 'good');
+                const suffix = result.commit === 'local'
+                    ? 'This is a local preview upload and will stay in this browser.'
+                    : 'Vercel will redeploy from the new commit shortly.';
+                setUploadStatus(`${result.message} ${suffix}`, 'good');
             } catch (error) {
                 setUploadStatus(error.message || 'Gallery upload failed.', 'bad');
             } finally {
