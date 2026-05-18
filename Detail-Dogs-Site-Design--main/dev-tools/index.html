@@ -123,7 +123,7 @@
             top: 0;
             z-index: 5;
             display: grid;
-            grid-template-columns: auto 1fr auto;
+            grid-template-columns: auto minmax(340px, 1fr) auto;
             gap: 1rem;
             align-items: center;
             padding: 0.85rem 1rem;
@@ -158,6 +158,7 @@
             border: 0;
         }
 
+        .dev-target select,
         .dev-target input {
             width: 100%;
             min-height: 40px;
@@ -167,6 +168,15 @@
             padding: 0 0.75rem;
             font: 700 0.88rem Arial, Helvetica, sans-serif;
             outline: none;
+        }
+
+        .dev-target select {
+            flex: 0 0 190px;
+            cursor: pointer;
+        }
+
+        .dev-target select option {
+            color: #050914;
         }
 
         .dev-actions,
@@ -487,6 +497,23 @@
             <h1 class="dev-title">Admin Dev Tools</h1>
             <label class="dev-target">
                 <span class="sr-only">Preview path</span>
+                <select id="pagePicker" aria-label="Pick a site page">
+                    <option value="">Pick Page</option>
+                    <option value="/">Home</option>
+                    <option value="/construction">Construction</option>
+                    <option value="/services/">Services</option>
+                    <option value="/about/">About</option>
+                    <option value="/memberships/">Memberships</option>
+                    <option value="/gallery/">Gallery</option>
+                    <option value="/reviews/">Reviews</option>
+                    <option value="/contact/">Contact</option>
+                    <option value="/service/deep-interior-detail">Deep Interior Detail</option>
+                    <option value="/service/full-service-detail">Full Service Detail</option>
+                    <option value="/service/deep-exterior-wash">Deep Exterior Wash</option>
+                    <option value="/service/executive-status-detail">Executive Status Detail</option>
+                    <option value="/service/headlight-restoration">Headlight Restoration</option>
+                    <option value="/service/car-tinting">Car Tinting</option>
+                </select>
                 <input id="targetPath" type="text" value="/" aria-label="Preview path">
             </label>
             <div class="dev-actions">
@@ -593,6 +620,7 @@
         const devPasswordToggle = document.getElementById('devPasswordToggle');
         const devLoginMessage = document.getElementById('devLoginMessage');
         const targetInput = document.getElementById('targetPath');
+        const pagePicker = document.getElementById('pagePicker');
         const previewFrame = document.getElementById('previewFrame');
         const previewWrap = document.getElementById('previewWrap');
         const webMode = document.getElementById('webMode');
@@ -658,6 +686,16 @@
             return value.startsWith('/') ? value : `/${value}`;
         }
 
+        function isLocalPreview() {
+            return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+        }
+
+        function syncPagePicker(target) {
+            const normalized = normalizePath(target);
+            const hasOption = Array.from(pagePicker.options).some((option) => option.value === normalized);
+            pagePicker.value = hasOption ? normalized : '';
+        }
+
         function setMode(mode) {
             const nextMode = mode === 'mobile' ? 'mobile' : 'web';
             previewWrap.classList.toggle('mobile', nextMode === 'mobile');
@@ -669,6 +707,7 @@
         function loadPreview() {
             const target = normalizePath(targetInput.value);
             targetInput.value = target;
+            syncPagePicker(target);
             previewFrame.src = target;
         }
 
@@ -695,8 +734,21 @@
             try {
                 const response = await fetch(`${path}?v=${Date.now()}`, { cache: 'no-store' });
                 if (!response.ok) throw new Error(`Could not load ${path}.`);
-                return await response.json();
+                const data = await response.json();
+                if (isLocalPreview() && path.endsWith('site-settings.json')) {
+                    return JSON.parse(localStorage.getItem('ddLocalSiteSettings') || 'null') || data;
+                }
+                if (isLocalPreview() && path.endsWith('site-posts.json')) {
+                    return JSON.parse(localStorage.getItem('ddLocalSitePosts') || 'null') || data;
+                }
+                return data;
             } catch (error) {
+                if (isLocalPreview() && path.endsWith('site-settings.json')) {
+                    return JSON.parse(localStorage.getItem('ddLocalSiteSettings') || 'null') || fallback;
+                }
+                if (isLocalPreview() && path.endsWith('site-posts.json')) {
+                    return JSON.parse(localStorage.getItem('ddLocalSitePosts') || 'null') || fallback;
+                }
                 return fallback;
             }
         }
@@ -825,19 +877,82 @@
             };
         }
 
+        function localAdminAction(action, payload) {
+            if (!isLocalPreview()) return null;
+
+            if (action === 'save-settings') {
+                const settings = {
+                    ...payload.settings,
+                    updatedAt: new Date().toISOString()
+                };
+                localStorage.setItem('ddLocalSiteSettings', JSON.stringify(settings));
+                return {
+                    ok: true,
+                    settings,
+                    commit: 'local',
+                    message: 'Saved locally for this preview.'
+                };
+            }
+
+            if (action === 'save-posts') {
+                const posts = {
+                    updatedAt: new Date().toISOString(),
+                    posts: payload.posts.posts || []
+                };
+                localStorage.setItem('ddLocalSitePosts', JSON.stringify(posts));
+                return {
+                    ok: true,
+                    posts,
+                    commit: 'local',
+                    message: 'Saved posts locally for this preview.'
+                };
+            }
+
+            if (action === 'set-traffic') {
+                const settings = {
+                    ...(currentSettings || collectSettings()),
+                    trafficMode: payload.trafficMode === 'open' ? 'open' : 'construction',
+                    updatedAt: new Date().toISOString()
+                };
+                localStorage.setItem('ddLocalSiteSettings', JSON.stringify(settings));
+                return {
+                    ok: true,
+                    settings,
+                    commit: 'local',
+                    message: settings.trafficMode === 'open'
+                        ? 'Local preview traffic is open.'
+                        : 'Local preview traffic is set to construction.'
+                };
+            }
+
+            return null;
+        }
+
         async function adminAction(action, payload) {
-            const response = await fetch('/api/site-admin', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, ...payload })
-            });
-            let result = null;
+            let response = null;
             try {
-                result = await response.json();
+                response = await fetch('/api/site-admin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action, ...payload })
+                });
             } catch (error) {
-                result = { error: 'No JSON response from admin API.' };
+                const localResult = localAdminAction(action, payload);
+                if (localResult) return localResult;
+                throw error;
+            }
+            let result = null;
+            const responseText = await response.text();
+            try {
+                result = responseText ? JSON.parse(responseText) : null;
+            } catch (error) {
+                const localResult = localAdminAction(action, payload);
+                if (localResult) return localResult;
+                result = { error: 'Admin API returned a non-JSON response. Check the Vercel function route.' };
             }
             if (!response.ok || !result.ok) {
+                const localResult = response.status === 404 ? localAdminAction(action, payload) : null;
+                if (localResult) return localResult;
                 throw new Error(result.error || 'Admin action failed.');
             }
             return result;
@@ -929,6 +1044,11 @@
 
         webMode.addEventListener('click', () => setMode('web'));
         mobileMode.addEventListener('click', () => setMode('mobile'));
+        pagePicker.addEventListener('change', () => {
+            if (!pagePicker.value) return;
+            targetInput.value = pagePicker.value;
+            loadPreview();
+        });
         refreshPreview.addEventListener('click', loadPreview);
         targetInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') loadPreview();

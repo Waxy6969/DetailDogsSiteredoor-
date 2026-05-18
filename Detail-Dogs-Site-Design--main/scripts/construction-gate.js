@@ -11,6 +11,19 @@
     const isDevToolsPage = path === "/dev-tools" || path === "/dev-tools/" || path.startsWith("/dev-tools/");
     if (isConstructionPage || isDevToolsPage) return;
 
+    function isLocalPreview() {
+        return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+    }
+
+    function localSettings(settings) {
+        if (!isLocalPreview()) return settings;
+        try {
+            return JSON.parse(localStorage.getItem("ddLocalSiteSettings") || "null") || settings;
+        } catch (error) {
+            return settings;
+        }
+    }
+
     function sendToConstruction() {
         const nextPath = `${path}${window.location.search}${window.location.hash}`;
         window.location.replace(`/construction?next=${encodeURIComponent(nextPath)}`);
@@ -22,9 +35,15 @@
             return response.json();
         })
         .then((settings) => {
+            settings = localSettings(settings);
             if (!settings || settings.trafficMode !== "open") {
                 sendToConstruction();
             }
         })
-        .catch(sendToConstruction);
+        .catch(() => {
+            const settings = localSettings({ trafficMode: "construction" });
+            if (!settings || settings.trafficMode !== "open") {
+                sendToConstruction();
+            }
+        });
 })();

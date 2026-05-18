@@ -4,6 +4,19 @@
     const originalPhoneDisplay = "(484) 926-0606";
     const originalPhonePlain = "484-926-0606";
 
+    function isLocalPreview() {
+        return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+    }
+
+    function localSettings(settings) {
+        if (!isLocalPreview()) return settings;
+        try {
+            return JSON.parse(localStorage.getItem("ddLocalSiteSettings") || "null") || settings;
+        } catch (error) {
+            return settings;
+        }
+    }
+
     function shouldSkipTextNode(node) {
         const parent = node.parentElement;
         if (!parent) return true;
@@ -115,7 +128,7 @@
         try {
             const response = await fetch(`${settingsPath}?v=${Date.now()}`, { cache: "no-store" });
             if (!response.ok) return;
-            const settings = await response.json();
+            const settings = localSettings(await response.json());
             updateContactLinks(settings);
             showAnnouncement(settings);
         } catch (error) {

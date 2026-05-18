@@ -1,4 +1,17 @@
 (function () {
+    function isLocalPreview() {
+        return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+    }
+
+    function localPosts(data) {
+        if (!isLocalPreview()) return data;
+        try {
+            return JSON.parse(localStorage.getItem("ddLocalSitePosts") || "null") || data;
+        } catch (error) {
+            return data;
+        }
+    }
+
     function postDateLabel(value) {
         if (!value) return "";
         const date = new Date(value);
@@ -104,7 +117,7 @@
         try {
             const response = await fetch(`/data/site-posts.json?v=${Date.now()}`, { cache: "no-store" });
             if (!response.ok) return;
-            const data = await response.json();
+            const data = localPosts(await response.json());
             const posts = (Array.isArray(data.posts) ? data.posts : [])
                 .filter((post) => post && post.status === "published" && (post.title || post.body))
                 .slice(0, 6);
