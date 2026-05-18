@@ -42,6 +42,7 @@
             position: fixed;
             inset: -2rem;
             z-index: -1;
+            display: none;
             background: inherit;
             filter: blur(18px) saturate(1.12);
             transform: scale(1.04);
@@ -49,8 +50,8 @@
 
         .construction-stage {
             position: relative;
-            width: calc(100svh * var(--poster-ratio));
-            height: 100svh;
+            width: min(100svw, calc(100svh * var(--poster-ratio)), 1402px);
+            height: min(100svh, calc(100svw / var(--poster-ratio)), 1122px);
             aspect-ratio: var(--poster-ratio);
             overflow: hidden;
             background: transparent;
@@ -199,6 +200,10 @@
                     var(--mobile-poster) center / cover no-repeat;
                 overflow: hidden;
                 align-items: center;
+            }
+
+            body::before {
+                display: block;
             }
 
             .construction-stage {
