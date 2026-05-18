@@ -15,6 +15,10 @@
         return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
     }
 
+    if (isLocalPreview() && new URLSearchParams(window.location.search).get("dd-dev-preview") === "1") {
+        return;
+    }
+
     function localSettings(settings) {
         if (!isLocalPreview()) return settings;
         try {

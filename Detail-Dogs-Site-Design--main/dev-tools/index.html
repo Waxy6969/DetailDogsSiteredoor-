@@ -696,6 +696,18 @@
             pagePicker.value = hasOption ? normalized : '';
         }
 
+        function previewUrlForTarget(target) {
+            if (!isLocalPreview()) return target;
+            if (target.startsWith('/construction') || target.startsWith('/dev-tools')) return target;
+
+            const url = new URL(target, window.location.origin);
+            if (url.pathname === '/') {
+                url.pathname = '/index.html';
+            }
+            url.searchParams.set('dd-dev-preview', '1');
+            return `${url.pathname}${url.search}${url.hash}`;
+        }
+
         function setMode(mode) {
             const nextMode = mode === 'mobile' ? 'mobile' : 'web';
             previewWrap.classList.toggle('mobile', nextMode === 'mobile');
@@ -708,7 +720,7 @@
             const target = normalizePath(targetInput.value);
             targetInput.value = target;
             syncPagePicker(target);
-            previewFrame.src = target;
+            previewFrame.src = previewUrlForTarget(target);
         }
 
         function setUploadStatus(message, type = '') {
@@ -1036,6 +1048,8 @@
         function showTools() {
             devLogin.hidden = true;
             devShell.hidden = false;
+            const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+            document.cookie = `dd_admin=${adminCookieValue}; Path=/; Max-Age=86400; SameSite=Lax${secureFlag}`;
             targetInput.value = normalizePath(params.get('target') || '/');
             setMode(localStorage.getItem('ddDevPreviewMode') || 'web');
             loadPreview();
