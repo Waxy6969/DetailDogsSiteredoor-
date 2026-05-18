@@ -176,8 +176,8 @@
 
         @media (max-aspect-ratio: 1402 / 1122) {
             .construction-stage {
-                width: calc(100svh * var(--poster-ratio));
-                height: 100svh;
+                width: min(100svw, calc(100svh * var(--poster-ratio)));
+                height: min(100svh, calc(100svw / var(--poster-ratio)));
             }
         }
 
@@ -202,8 +202,8 @@
             }
 
             .construction-stage {
-                width: calc(100svh * var(--poster-ratio));
-                height: 100svh;
+                width: min(100svw, calc(100svh * var(--poster-ratio)));
+                height: min(100svh, calc(100svw / var(--poster-ratio)));
             }
 
             .hotspot {
