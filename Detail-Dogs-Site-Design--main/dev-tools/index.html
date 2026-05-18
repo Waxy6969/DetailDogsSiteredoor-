@@ -666,6 +666,7 @@
                 <div class="button-row">
                     <button id="saveCopyButton" type="button">Save Text</button>
                     <button id="reloadCopyButton" type="button">Reload Text</button>
+                    <button id="resetLocalCopyButton" type="button">Reset Local Text</button>
                 </div>
             </div>
             <div class="copy-controls">
@@ -746,6 +747,7 @@
         const copyStatus = document.getElementById('copyStatus');
         const saveCopyButton = document.getElementById('saveCopyButton');
         const reloadCopyButton = document.getElementById('reloadCopyButton');
+        const resetLocalCopyButton = document.getElementById('resetLocalCopyButton');
         const params = new URLSearchParams(window.location.search);
         let currentSettings = null;
         let currentPosts = [];
@@ -1449,6 +1451,13 @@
         });
 
         reloadCopyButton.addEventListener('click', loadAdminData);
+
+        resetLocalCopyButton.addEventListener('click', async () => {
+            localStorage.removeItem('ddLocalSiteCopy');
+            setMiniStatus(copyStatus, 'Local text overrides cleared. Reloading saved site text...', 'good');
+            await loadAdminData();
+            refreshPreview.click();
+        });
 
         saveCopyButton.addEventListener('click', async () => {
             const item = selectedCopyItem();

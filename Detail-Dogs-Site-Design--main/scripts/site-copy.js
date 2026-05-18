@@ -28,6 +28,16 @@
         return template.innerHTML;
     }
 
+    function normalizePath(value) {
+        const path = String(value || "/").split("?")[0].split("#")[0];
+        if (path === "/" || path === "/index" || path === "/index.html") return "/";
+        return path.endsWith("/") ? path : `${path}/`;
+    }
+
+    function itemBelongsToCurrentPage(item) {
+        return normalizePath(item.path) === normalizePath(window.location.pathname);
+    }
+
     function applyCopyItem(item) {
         if (!item || !item.selector || typeof item.value !== "string") return;
 
@@ -46,7 +56,7 @@
             if (!response.ok) return;
             const copy = localCopy(await response.json());
             const items = Array.isArray(copy.items) ? copy.items : [];
-            items.forEach(applyCopyItem);
+            items.filter(itemBelongsToCurrentPage).forEach(applyCopyItem);
         } catch (error) {
             // Copy overrides are optional. Keep the static page readable if they fail.
         }
