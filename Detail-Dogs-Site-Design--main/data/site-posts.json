@@ -1,0 +1,13 @@
+{
+  "updatedAt": "2026-05-18T19:55:00.000Z",
+  "posts": [
+    {
+      "id": "welcome-update",
+      "title": "Detail Dogs site updates are in progress",
+      "category": "Site Update",
+      "body": "The new Detail Dogs site is being polished. Booking is still open by phone or email.",
+      "status": "draft",
+      "createdAt": "2026-05-18T19:55:00.000Z"
+    }
+  ]
+}

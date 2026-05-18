@@ -227,6 +227,176 @@
             color: #ff9aaa;
         }
 
+        .admin-dashboard {
+            display: grid;
+            grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr) minmax(320px, 1.15fr);
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(4, 9, 18, 0.58);
+        }
+
+        .admin-panel {
+            display: grid;
+            gap: 0.8rem;
+            align-content: start;
+            min-width: 0;
+            border: 1px solid rgba(22, 137, 255, 0.28);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(22, 137, 255, 0.08));
+            padding: 1rem;
+        }
+
+        .admin-panel h2,
+        .admin-panel h3 {
+            margin: 0;
+            font-size: 0.86rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .panel-note,
+        .mini-status,
+        .post-list-empty {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+
+        .field-grid {
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .admin-label {
+            display: grid;
+            gap: 0.35rem;
+            min-width: 0;
+            color: var(--muted);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .admin-label input,
+        .admin-label textarea,
+        .admin-label select {
+            width: 100%;
+            min-height: 40px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            font: 700 0.84rem Arial, Helvetica, sans-serif;
+            padding: 0.6rem 0.7rem;
+            outline: none;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .admin-label textarea {
+            min-height: 92px;
+            resize: vertical;
+            line-height: 1.45;
+        }
+
+        .admin-label select option {
+            color: #050914;
+        }
+
+        .check-row {
+            display: flex;
+            gap: 0.55rem;
+            align-items: center;
+            color: var(--text);
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+
+        .check-row input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--blue);
+        }
+
+        .button-row,
+        .traffic-actions,
+        .post-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .traffic-mode {
+            display: grid;
+            gap: 0.35rem;
+            padding: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .traffic-mode strong {
+            color: #85f2bd;
+            font-size: 1.1rem;
+        }
+
+        .post-list {
+            display: grid;
+            gap: 0.55rem;
+            max-height: 330px;
+            overflow: auto;
+            padding-right: 0.2rem;
+        }
+
+        .post-row {
+            display: grid;
+            gap: 0.45rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.65rem;
+        }
+
+        .post-row-title {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .post-row-title strong {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .status-pill {
+            flex: 0 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--muted);
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            padding: 0.25rem 0.4rem;
+            text-transform: uppercase;
+        }
+
+        .status-pill.published {
+            border-color: rgba(133, 242, 189, 0.58);
+            color: #85f2bd;
+        }
+
+        .post-row p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.78rem;
+            line-height: 1.35;
+        }
+
+        .post-row button {
+            min-height: 34px;
+        }
+
         button,
         .dev-link {
             min-height: 40px;
@@ -282,6 +452,10 @@
             }
 
             .upload-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-dashboard {
                 grid-template-columns: 1fr;
             }
 
@@ -345,6 +519,64 @@
             <button id="galleryUploadButton" type="submit">Upload</button>
             <p class="upload-status" id="galleryUploadStatus" aria-live="polite">Uploads are saved into the GitHub gallery folder and added to the manifest.</p>
         </form>
+        <section class="admin-dashboard" aria-label="Site admin controls">
+            <form class="admin-panel" id="siteSettingsForm">
+                <h2>Site Edit</h2>
+                <p class="panel-note">Update public contact info and the site announcement. Saves commit to GitHub and redeploy on Vercel.</p>
+                <div class="field-grid">
+                    <label class="admin-label">Business name<input id="businessNameInput" type="text" autocomplete="organization" required></label>
+                    <label class="admin-label">Email<input id="emailInput" type="email" autocomplete="email" required></label>
+                    <label class="admin-label">Phone shown<input id="phoneDisplayInput" type="text" autocomplete="tel" required></label>
+                    <label class="admin-label">Phone link<input id="phoneHrefInput" type="text" placeholder="+14849260606" required></label>
+                    <label class="check-row"><input id="announcementEnabledInput" type="checkbox"> Show announcement on site</label>
+                    <label class="admin-label">Announcement title<input id="announcementTitleInput" type="text"></label>
+                    <label class="admin-label">Announcement text<textarea id="announcementTextInput"></textarea></label>
+                </div>
+                <div class="button-row">
+                    <button id="saveSettingsButton" type="submit">Save Site</button>
+                    <button id="reloadSettingsButton" type="button">Reload</button>
+                </div>
+                <p class="mini-status" id="siteSettingsStatus" aria-live="polite">Loading current settings...</p>
+            </form>
+
+            <section class="admin-panel" aria-labelledby="traffic-title">
+                <h2 id="traffic-title">Traffic Control</h2>
+                <p class="panel-note">Choose whether visitors see the construction page or the full website. Admins with the cookie can still preview the site either way.</p>
+                <div class="traffic-mode">
+                    <span class="panel-note">Current mode</span>
+                    <strong id="trafficModeLabel">Loading...</strong>
+                </div>
+                <div class="traffic-actions">
+                    <button id="constructionModeButton" type="button">Construction Mode</button>
+                    <button id="openModeButton" type="button">Open Full Site</button>
+                </div>
+                <p class="mini-status" id="trafficStatus" aria-live="polite">Traffic changes commit updated settings and Vercel routing.</p>
+                <div class="button-row">
+                    <a class="dev-link" href="/construction" target="_blank" rel="noopener">Construction</a>
+                    <a class="dev-link" href="/" target="_blank" rel="noopener">Home</a>
+                    <a class="dev-link" href="/gallery/" target="_blank" rel="noopener">Gallery</a>
+                </div>
+            </section>
+
+            <section class="admin-panel" aria-labelledby="posts-title">
+                <h2 id="posts-title">Site Posts</h2>
+                <p class="panel-note">Create short updates for the home page. Drafts stay hidden; published posts show under Latest Updates.</p>
+                <form class="field-grid" id="postEditorForm">
+                    <input id="postIdInput" type="hidden">
+                    <label class="admin-label">Title<input id="postTitleInput" type="text" required></label>
+                    <label class="admin-label">Category<input id="postCategoryInput" type="text" value="Update"></label>
+                    <label class="admin-label">Status<select id="postStatusInput"><option value="draft">Draft</option><option value="published">Published</option></select></label>
+                    <label class="admin-label">Post text<textarea id="postBodyInput" required></textarea></label>
+                    <div class="post-actions">
+                        <button id="addPostButton" type="submit">Add Post</button>
+                        <button id="clearPostButton" type="button">Clear</button>
+                        <button id="savePostsButton" type="button">Save Posts</button>
+                    </div>
+                </form>
+                <div class="post-list" id="postList"></div>
+                <p class="mini-status" id="postsStatus" aria-live="polite">Loading posts...</p>
+            </section>
+        </section>
         <section class="preview-zone" aria-label="Site preview">
             <div class="preview-frame-wrap" id="previewWrap">
                 <iframe id="previewFrame" title="Detail Dogs site preview"></iframe>
@@ -371,7 +603,35 @@
         const galleryFiles = document.getElementById('galleryFiles');
         const galleryUploadButton = document.getElementById('galleryUploadButton');
         const galleryUploadStatus = document.getElementById('galleryUploadStatus');
+        const siteSettingsForm = document.getElementById('siteSettingsForm');
+        const businessNameInput = document.getElementById('businessNameInput');
+        const emailInput = document.getElementById('emailInput');
+        const phoneDisplayInput = document.getElementById('phoneDisplayInput');
+        const phoneHrefInput = document.getElementById('phoneHrefInput');
+        const announcementEnabledInput = document.getElementById('announcementEnabledInput');
+        const announcementTitleInput = document.getElementById('announcementTitleInput');
+        const announcementTextInput = document.getElementById('announcementTextInput');
+        const saveSettingsButton = document.getElementById('saveSettingsButton');
+        const reloadSettingsButton = document.getElementById('reloadSettingsButton');
+        const siteSettingsStatus = document.getElementById('siteSettingsStatus');
+        const trafficModeLabel = document.getElementById('trafficModeLabel');
+        const constructionModeButton = document.getElementById('constructionModeButton');
+        const openModeButton = document.getElementById('openModeButton');
+        const trafficStatus = document.getElementById('trafficStatus');
+        const postEditorForm = document.getElementById('postEditorForm');
+        const postIdInput = document.getElementById('postIdInput');
+        const postTitleInput = document.getElementById('postTitleInput');
+        const postCategoryInput = document.getElementById('postCategoryInput');
+        const postStatusInput = document.getElementById('postStatusInput');
+        const postBodyInput = document.getElementById('postBodyInput');
+        const addPostButton = document.getElementById('addPostButton');
+        const clearPostButton = document.getElementById('clearPostButton');
+        const savePostsButton = document.getElementById('savePostsButton');
+        const postList = document.getElementById('postList');
+        const postsStatus = document.getElementById('postsStatus');
         const params = new URLSearchParams(window.location.search);
+        let currentSettings = null;
+        let currentPosts = [];
 
         function isAdmin() {
             return document.cookie.split(';').some((cookie) => {
@@ -416,6 +676,187 @@
             galleryUploadStatus.textContent = message;
             galleryUploadStatus.classList.toggle('good', type === 'good');
             galleryUploadStatus.classList.toggle('bad', type === 'bad');
+        }
+
+        function setMiniStatus(element, message, type = '') {
+            element.textContent = message;
+            element.style.color = type === 'good' ? '#85f2bd' : type === 'bad' ? '#ff9aaa' : '';
+        }
+
+        function slugify(value) {
+            return String(value || 'site-post')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 58) || 'site-post';
+        }
+
+        async function fetchJson(path, fallback) {
+            try {
+                const response = await fetch(`${path}?v=${Date.now()}`, { cache: 'no-store' });
+                if (!response.ok) throw new Error(`Could not load ${path}.`);
+                return await response.json();
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        function renderTrafficMode(mode) {
+            const nextMode = mode === 'open' ? 'open' : 'construction';
+            trafficModeLabel.textContent = nextMode === 'open' ? 'Open Full Site' : 'Construction Page';
+            constructionModeButton.classList.toggle('active', nextMode === 'construction');
+            openModeButton.classList.toggle('active', nextMode === 'open');
+        }
+
+        function renderSettings(settings) {
+            currentSettings = {
+                businessName: settings.businessName || 'Detail Dogs LLC',
+                email: settings.email || 'detaildogsllc@gmail.com',
+                phoneDisplay: settings.phoneDisplay || '(484) 926-0606',
+                phoneHref: settings.phoneHref || '+14849260606',
+                announcementEnabled: Boolean(settings.announcementEnabled),
+                announcementTitle: settings.announcementTitle || 'Detail Dogs Update',
+                announcementText: settings.announcementText || '',
+                trafficMode: settings.trafficMode === 'open' ? 'open' : 'construction',
+                updatedAt: settings.updatedAt || new Date().toISOString()
+            };
+
+            businessNameInput.value = currentSettings.businessName;
+            emailInput.value = currentSettings.email;
+            phoneDisplayInput.value = currentSettings.phoneDisplay;
+            phoneHrefInput.value = currentSettings.phoneHref;
+            announcementEnabledInput.checked = currentSettings.announcementEnabled;
+            announcementTitleInput.value = currentSettings.announcementTitle;
+            announcementTextInput.value = currentSettings.announcementText;
+            renderTrafficMode(currentSettings.trafficMode);
+        }
+
+        function collectSettings() {
+            return {
+                businessName: businessNameInput.value.trim(),
+                email: emailInput.value.trim(),
+                phoneDisplay: phoneDisplayInput.value.trim(),
+                phoneHref: phoneHrefInput.value.trim(),
+                announcementEnabled: announcementEnabledInput.checked,
+                announcementTitle: announcementTitleInput.value.trim() || 'Detail Dogs Update',
+                announcementText: announcementTextInput.value.trim(),
+                trafficMode: currentSettings && currentSettings.trafficMode === 'open' ? 'open' : 'construction'
+            };
+        }
+
+        function clearPostEditor() {
+            postIdInput.value = '';
+            postTitleInput.value = '';
+            postCategoryInput.value = 'Update';
+            postStatusInput.value = 'draft';
+            postBodyInput.value = '';
+            addPostButton.textContent = 'Add Post';
+        }
+
+        function renderPostList() {
+            postList.innerHTML = '';
+            if (!currentPosts.length) {
+                const empty = document.createElement('p');
+                empty.className = 'post-list-empty';
+                empty.textContent = 'No posts yet. Add one above, then save.';
+                postList.appendChild(empty);
+                return;
+            }
+
+            currentPosts.forEach((post) => {
+                const row = document.createElement('article');
+                row.className = 'post-row';
+                row.innerHTML = `
+                    <div class="post-row-title">
+                        <strong></strong>
+                        <span class="status-pill"></span>
+                    </div>
+                    <p></p>
+                    <div class="post-actions">
+                        <button type="button" data-action="edit">Edit</button>
+                        <button type="button" data-action="toggle"></button>
+                        <button type="button" data-action="delete">Delete</button>
+                    </div>
+                `;
+
+                row.querySelector('strong').textContent = post.title || 'Untitled post';
+                const pill = row.querySelector('.status-pill');
+                pill.textContent = post.status === 'published' ? 'Published' : 'Draft';
+                pill.classList.toggle('published', post.status === 'published');
+                row.querySelector('p').textContent = post.body || 'No post text yet.';
+                row.querySelector('[data-action="toggle"]').textContent = post.status === 'published' ? 'Make Draft' : 'Publish';
+
+                row.querySelector('[data-action="edit"]').addEventListener('click', () => {
+                    postIdInput.value = post.id;
+                    postTitleInput.value = post.title || '';
+                    postCategoryInput.value = post.category || 'Update';
+                    postStatusInput.value = post.status === 'published' ? 'published' : 'draft';
+                    postBodyInput.value = post.body || '';
+                    addPostButton.textContent = 'Update Post';
+                    postTitleInput.focus();
+                });
+
+                row.querySelector('[data-action="toggle"]').addEventListener('click', () => {
+                    post.status = post.status === 'published' ? 'draft' : 'published';
+                    renderPostList();
+                    setMiniStatus(postsStatus, 'Post changed locally. Click Save Posts to publish it to GitHub.');
+                });
+
+                row.querySelector('[data-action="delete"]').addEventListener('click', () => {
+                    currentPosts = currentPosts.filter((item) => item.id !== post.id);
+                    renderPostList();
+                    setMiniStatus(postsStatus, 'Post deleted locally. Click Save Posts to publish it to GitHub.');
+                });
+
+                postList.appendChild(row);
+            });
+        }
+
+        function collectPostsPayload() {
+            return {
+                posts: currentPosts.map((post) => ({
+                    id: post.id,
+                    title: String(post.title || '').trim(),
+                    category: String(post.category || 'Update').trim(),
+                    body: String(post.body || '').trim(),
+                    status: post.status === 'published' ? 'published' : 'draft',
+                    createdAt: post.createdAt || new Date().toISOString()
+                }))
+            };
+        }
+
+        async function adminAction(action, payload) {
+            const response = await fetch('/api/site-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, ...payload })
+            });
+            let result = null;
+            try {
+                result = await response.json();
+            } catch (error) {
+                result = { error: 'No JSON response from admin API.' };
+            }
+            if (!response.ok || !result.ok) {
+                throw new Error(result.error || 'Admin action failed.');
+            }
+            return result;
+        }
+
+        async function loadAdminData() {
+            setMiniStatus(siteSettingsStatus, 'Loading current settings...');
+            setMiniStatus(postsStatus, 'Loading posts...');
+            const [settings, postsData] = await Promise.all([
+                fetchJson('/data/site-settings.json', {}),
+                fetchJson('/data/site-posts.json', { posts: [] })
+            ]);
+
+            renderSettings(settings);
+            currentPosts = Array.isArray(postsData.posts) ? postsData.posts : [];
+            renderPostList();
+            setMiniStatus(siteSettingsStatus, `Loaded. Last updated: ${currentSettings.updatedAt || 'unknown'}.`, 'good');
+            setMiniStatus(postsStatus, `${currentPosts.length} post${currentPosts.length === 1 ? '' : 's'} loaded.`, 'good');
+            setMiniStatus(trafficStatus, 'Traffic changes commit updated settings and Vercel routing.');
         }
 
         function readImage(file) {
@@ -483,6 +924,7 @@
             targetInput.value = normalizePath(params.get('target') || '/');
             setMode(localStorage.getItem('ddDevPreviewMode') || 'web');
             loadPreview();
+            loadAdminData();
         }
 
         webMode.addEventListener('click', () => setMode('web'));
@@ -539,6 +981,108 @@
                 setUploadStatus(error.message || 'Gallery upload failed.', 'bad');
             } finally {
                 galleryUploadButton.disabled = false;
+            }
+        });
+
+        reloadSettingsButton.addEventListener('click', loadAdminData);
+
+        siteSettingsForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            saveSettingsButton.disabled = true;
+            setMiniStatus(siteSettingsStatus, 'Saving site settings to GitHub...');
+
+            try {
+                const result = await adminAction('save-settings', {
+                    settings: collectSettings()
+                });
+                renderSettings(result.settings);
+                setMiniStatus(siteSettingsStatus, `${result.message} Commit: ${String(result.commit).slice(0, 7)}.`, 'good');
+                refreshPreview.click();
+            } catch (error) {
+                setMiniStatus(siteSettingsStatus, error.message || 'Could not save settings.', 'bad');
+            } finally {
+                saveSettingsButton.disabled = false;
+            }
+        });
+
+        constructionModeButton.addEventListener('click', async () => {
+            constructionModeButton.disabled = true;
+            openModeButton.disabled = true;
+            setMiniStatus(trafficStatus, 'Switching public traffic to the construction page...');
+
+            try {
+                const result = await adminAction('set-traffic', { trafficMode: 'construction' });
+                renderSettings(result.settings);
+                setMiniStatus(trafficStatus, `${result.message} Commit: ${String(result.commit).slice(0, 7)}.`, 'good');
+            } catch (error) {
+                setMiniStatus(trafficStatus, error.message || 'Could not change traffic mode.', 'bad');
+            } finally {
+                constructionModeButton.disabled = false;
+                openModeButton.disabled = false;
+            }
+        });
+
+        openModeButton.addEventListener('click', async () => {
+            constructionModeButton.disabled = true;
+            openModeButton.disabled = true;
+            setMiniStatus(trafficStatus, 'Opening public traffic to the full website...');
+
+            try {
+                const result = await adminAction('set-traffic', { trafficMode: 'open' });
+                renderSettings(result.settings);
+                setMiniStatus(trafficStatus, `${result.message} Commit: ${String(result.commit).slice(0, 7)}.`, 'good');
+            } catch (error) {
+                setMiniStatus(trafficStatus, error.message || 'Could not change traffic mode.', 'bad');
+            } finally {
+                constructionModeButton.disabled = false;
+                openModeButton.disabled = false;
+            }
+        });
+
+        clearPostButton.addEventListener('click', clearPostEditor);
+
+        postEditorForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const title = postTitleInput.value.trim();
+            const body = postBodyInput.value.trim();
+            if (!title || !body) {
+                setMiniStatus(postsStatus, 'Post title and text are required.', 'bad');
+                return;
+            }
+
+            const id = postIdInput.value || `${slugify(title)}-${Date.now()}`;
+            const post = {
+                id,
+                title,
+                category: postCategoryInput.value.trim() || 'Update',
+                body,
+                status: postStatusInput.value === 'published' ? 'published' : 'draft',
+                createdAt: currentPosts.find((item) => item.id === id)?.createdAt || new Date().toISOString()
+            };
+
+            currentPosts = [post, ...currentPosts.filter((item) => item.id !== id)].slice(0, 24);
+            clearPostEditor();
+            renderPostList();
+            setMiniStatus(postsStatus, 'Post changed locally. Click Save Posts to publish it to GitHub.');
+        });
+
+        savePostsButton.addEventListener('click', async () => {
+            savePostsButton.disabled = true;
+            setMiniStatus(postsStatus, 'Saving posts to GitHub...');
+
+            try {
+                const result = await adminAction('save-posts', {
+                    posts: collectPostsPayload()
+                });
+                currentPosts = Array.isArray(result.posts.posts) ? result.posts.posts : [];
+                renderPostList();
+                targetInput.value = '/';
+                loadPreview();
+                setMiniStatus(postsStatus, `${result.message} Commit: ${String(result.commit).slice(0, 7)}.`, 'good');
+            } catch (error) {
+                setMiniStatus(postsStatus, error.message || 'Could not save posts.', 'bad');
+            } finally {
+                savePostsButton.disabled = false;
             }
         });
 
