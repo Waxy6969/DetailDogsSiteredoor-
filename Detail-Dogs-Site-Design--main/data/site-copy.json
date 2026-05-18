@@ -1,0 +1,166 @@
+{
+  "updatedAt": "2026-05-18T20:40:00.000Z",
+  "items": [
+    {
+      "id": "home.hero.badge",
+      "page": "Home",
+      "path": "/",
+      "label": "Hero badge",
+      "selector": "#home .hero-badge",
+      "value": "Reading, PA and surrounding areas"
+    },
+    {
+      "id": "home.hero.line1",
+      "page": "Home",
+      "path": "/",
+      "label": "Hero headline line 1",
+      "selector": "#home .hero h1 .line-1",
+      "value": "YOU ARE"
+    },
+    {
+      "id": "home.hero.line2",
+      "page": "Home",
+      "path": "/",
+      "label": "Hero headline line 2",
+      "selector": "#home .hero h1 .line-2",
+      "value": "BARKING UP"
+    },
+    {
+      "id": "home.hero.line3",
+      "page": "Home",
+      "path": "/",
+      "label": "Hero headline line 3",
+      "selector": "#home .hero h1 .line-3",
+      "value": "the right tree"
+    },
+    {
+      "id": "home.hero.description",
+      "page": "Home",
+      "path": "/",
+      "label": "Hero description",
+      "selector": "#home .hero-desc",
+      "value": "Professional Services. Top Quality. Passion Driven. Detail Dogs LLC delivers premium automotive detailing, surface restoration, tinting, paint correction, and protection services."
+    },
+    {
+      "id": "home.services.subtitle",
+      "page": "Home",
+      "path": "/",
+      "label": "Service menu subtitle",
+      "selector": "#services .section-subtitle",
+      "value": "Detailing, protection, tinting, and restoration built around clean results and clear communication."
+    },
+    {
+      "id": "home.gallery.subtitle",
+      "page": "Home",
+      "path": "/",
+      "label": "Showcase subtitle",
+      "selector": "#gallery .section-subtitle",
+      "value": "A visual layout for before-and-after transformations, service categories, and behind-the-scenes content."
+    },
+    {
+      "id": "home.review.quote",
+      "page": "Home",
+      "path": "/",
+      "label": "Featured review quote",
+      "selector": "#reviews .review-quote p",
+      "value": "\"This truck looks like it's a 2021 after Detail Dogs got done with it. Insane work! 10/10.\""
+    },
+    {
+      "id": "home.contact.title",
+      "page": "Home",
+      "path": "/",
+      "label": "Contact headline",
+      "selector": "#contact .cta-title",
+      "mode": "html",
+      "value": "READY FOR A CLEANER RESULT?<span>Send a request today.</span>"
+    },
+    {
+      "id": "home.contact.description",
+      "page": "Home",
+      "path": "/",
+      "label": "Contact description",
+      "selector": "#contact .cta-desc",
+      "value": "Questions, comments, or service requests? Reach out directly with the service type, vehicle condition, preferred timing, and any photos you want reviewed."
+    },
+    {
+      "id": "services.hero.title",
+      "page": "Services",
+      "path": "/services/",
+      "label": "Services page title",
+      "selector": ".subpage-hero h1",
+      "value": "Services"
+    },
+    {
+      "id": "services.hero.copy",
+      "page": "Services",
+      "path": "/services/",
+      "label": "Services page intro",
+      "selector": ".subpage-copy",
+      "value": "Choose the service that matches your vehicle condition, goals, and schedule."
+    },
+    {
+      "id": "gallery.hero.title",
+      "page": "Gallery",
+      "path": "/gallery/",
+      "label": "Gallery page title",
+      "selector": ".subpage-hero h1",
+      "value": "Results Gallery"
+    },
+    {
+      "id": "gallery.hero.copy",
+      "page": "Gallery",
+      "path": "/gallery/",
+      "label": "Gallery page intro",
+      "selector": ".subpage-copy",
+      "value": "Before-and-after work, service categories, and fresh uploads from the Detail Dogs gallery."
+    },
+    {
+      "id": "reviews.hero.title",
+      "page": "Reviews",
+      "path": "/reviews/",
+      "label": "Reviews page title",
+      "selector": ".subpage-hero h1",
+      "value": "Reviews"
+    },
+    {
+      "id": "reviews.hero.copy",
+      "page": "Reviews",
+      "path": "/reviews/",
+      "label": "Reviews page intro",
+      "selector": ".subpage-copy",
+      "value": "Real customer feedback, service notes, and the kind of work Detail Dogs is known for."
+    },
+    {
+      "id": "memberships.hero.title",
+      "page": "Memberships",
+      "path": "/memberships/",
+      "label": "Memberships page title",
+      "selector": ".subpage-hero h1",
+      "value": "Maintenance Memberships"
+    },
+    {
+      "id": "memberships.hero.copy",
+      "page": "Memberships",
+      "path": "/memberships/",
+      "label": "Memberships page intro",
+      "selector": ".subpage-copy",
+      "value": "Keep your vehicle cleaner between major details with clear maintenance options."
+    },
+    {
+      "id": "about.hero.title",
+      "page": "About",
+      "path": "/about/",
+      "label": "About page title",
+      "selector": ".subpage-hero h1",
+      "value": "About Detail Dogs"
+    },
+    {
+      "id": "about.hero.copy",
+      "page": "About",
+      "path": "/about/",
+      "label": "About page intro",
+      "selector": ".subpage-copy",
+      "value": "Detail Dogs LLC is built around professional service, strong communication, and results you can see."
+    }
+  ]
+}

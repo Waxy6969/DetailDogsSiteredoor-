@@ -407,6 +407,54 @@
             min-height: 34px;
         }
 
+        .copy-board {
+            display: grid;
+            gap: 0.8rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(7, 13, 26, 0.68);
+        }
+
+        .copy-board-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1rem;
+            align-items: end;
+            justify-content: space-between;
+        }
+
+        .copy-controls {
+            display: grid;
+            grid-template-columns: minmax(150px, 220px) minmax(260px, 1fr);
+            gap: 0.65rem;
+            align-items: end;
+        }
+
+        .copy-editor-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, 1fr) minmax(280px, 1.6fr);
+            gap: 0.75rem;
+            align-items: start;
+        }
+
+        .copy-meta {
+            display: grid;
+            gap: 0.55rem;
+            padding: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.18);
+        }
+
+        .copy-meta code {
+            overflow-wrap: anywhere;
+            color: #85f2bd;
+            font-size: 0.78rem;
+        }
+
+        #copyValueInput {
+            min-height: 145px;
+        }
+
         button,
         .dev-link {
             min-height: 40px;
@@ -466,6 +514,11 @@
             }
 
             .admin-dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .copy-controls,
+            .copy-editor-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -604,6 +657,33 @@
                 <p class="mini-status" id="postsStatus" aria-live="polite">Loading posts...</p>
             </section>
         </section>
+        <section class="copy-board" aria-labelledby="copy-title">
+            <div class="copy-board-header">
+                <div>
+                    <h2 class="dev-title" id="copy-title">Site Text</h2>
+                    <p class="panel-note">Edit named text blocks without touching code. Pick a page, choose the text, update it, then save.</p>
+                </div>
+                <div class="button-row">
+                    <button id="saveCopyButton" type="button">Save Text</button>
+                    <button id="reloadCopyButton" type="button">Reload Text</button>
+                </div>
+            </div>
+            <div class="copy-controls">
+                <label class="admin-label">Page<select id="copyPageFilter"></select></label>
+                <label class="admin-label">Text block<select id="copyBlockSelect"></select></label>
+            </div>
+            <div class="copy-editor-grid">
+                <div class="copy-meta">
+                    <h3>Selected Block</h3>
+                    <p class="panel-note" id="copyBlockLabel">Loading text blocks...</p>
+                    <p class="panel-note">Page path: <code id="copyBlockPath">-</code></p>
+                    <p class="panel-note">Target: <code id="copyBlockSelector">-</code></p>
+                    <p class="panel-note">Tip: use the page picker above to view the matching page while editing.</p>
+                </div>
+                <label class="admin-label">Text<textarea id="copyValueInput"></textarea></label>
+            </div>
+            <p class="mini-status" id="copyStatus" aria-live="polite">Loading editable text...</p>
+        </section>
         <section class="preview-zone" aria-label="Site preview">
             <div class="preview-frame-wrap" id="previewWrap">
                 <iframe id="previewFrame" title="Detail Dogs site preview"></iframe>
@@ -657,9 +737,19 @@
         const savePostsButton = document.getElementById('savePostsButton');
         const postList = document.getElementById('postList');
         const postsStatus = document.getElementById('postsStatus');
+        const copyPageFilter = document.getElementById('copyPageFilter');
+        const copyBlockSelect = document.getElementById('copyBlockSelect');
+        const copyValueInput = document.getElementById('copyValueInput');
+        const copyBlockLabel = document.getElementById('copyBlockLabel');
+        const copyBlockPath = document.getElementById('copyBlockPath');
+        const copyBlockSelector = document.getElementById('copyBlockSelector');
+        const copyStatus = document.getElementById('copyStatus');
+        const saveCopyButton = document.getElementById('saveCopyButton');
+        const reloadCopyButton = document.getElementById('reloadCopyButton');
         const params = new URLSearchParams(window.location.search);
         let currentSettings = null;
         let currentPosts = [];
+        let currentCopy = { items: [] };
 
         function isAdmin() {
             return document.cookie.split(';').some((cookie) => {
@@ -824,6 +914,9 @@
                 if (isLocalPreview() && path.endsWith('site-posts.json')) {
                     return JSON.parse(localStorage.getItem('ddLocalSitePosts') || 'null') || data;
                 }
+                if (isLocalPreview() && path.endsWith('site-copy.json')) {
+                    return JSON.parse(localStorage.getItem('ddLocalSiteCopy') || 'null') || data;
+                }
                 return data;
             } catch (error) {
                 if (isLocalPreview() && path.endsWith('site-settings.json')) {
@@ -831,6 +924,9 @@
                 }
                 if (isLocalPreview() && path.endsWith('site-posts.json')) {
                     return JSON.parse(localStorage.getItem('ddLocalSitePosts') || 'null') || fallback;
+                }
+                if (isLocalPreview() && path.endsWith('site-copy.json')) {
+                    return JSON.parse(localStorage.getItem('ddLocalSiteCopy') || 'null') || fallback;
                 }
                 return fallback;
             }
@@ -960,6 +1056,83 @@
             };
         }
 
+        function copyPages() {
+            return [...new Set((currentCopy.items || []).map((item) => item.page || 'Site'))];
+        }
+
+        function selectedCopyItem() {
+            return (currentCopy.items || []).find((item) => item.id === copyBlockSelect.value) || null;
+        }
+
+        function renderCopyPageOptions() {
+            const previous = copyPageFilter.value;
+            copyPageFilter.innerHTML = copyPages().map((page) => {
+                return `<option value="${page.replaceAll('"', '&quot;')}">${page}</option>`;
+            }).join('');
+
+            if (previous && copyPages().includes(previous)) {
+                copyPageFilter.value = previous;
+            }
+        }
+
+        function renderCopyBlockOptions() {
+            const page = copyPageFilter.value || copyPages()[0] || 'Site';
+            const items = (currentCopy.items || []).filter((item) => (item.page || 'Site') === page);
+            const previous = copyBlockSelect.value;
+            copyBlockSelect.innerHTML = items.map((item) => {
+                return `<option value="${String(item.id).replaceAll('"', '&quot;')}">${String(item.label || item.id).replaceAll('<', '&lt;')}</option>`;
+            }).join('');
+
+            if (previous && items.some((item) => item.id === previous)) {
+                copyBlockSelect.value = previous;
+            }
+
+            renderSelectedCopy();
+        }
+
+        function renderSelectedCopy() {
+            const item = selectedCopyItem();
+            if (!item) {
+                copyBlockLabel.textContent = 'No editable text block selected.';
+                copyBlockPath.textContent = '-';
+                copyBlockSelector.textContent = '-';
+                copyValueInput.value = '';
+                return;
+            }
+
+            copyBlockLabel.textContent = item.label || item.id;
+            copyBlockPath.textContent = item.path || '/';
+            copyBlockSelector.textContent = item.selector || '-';
+            copyValueInput.value = item.value || '';
+        }
+
+        function collectCopyPayload() {
+            return {
+                items: (currentCopy.items || []).map((item) => ({
+                    id: item.id,
+                    page: item.page || 'Site',
+                    path: item.path || '/',
+                    label: item.label || item.id,
+                    selector: item.selector,
+                    mode: item.mode === 'html' ? 'html' : 'text',
+                    value: String(item.value || '')
+                }))
+            };
+        }
+
+        function previewSelectedCopyPage() {
+            const item = selectedCopyItem();
+            if (!item || !item.path) return;
+            targetInput.value = item.path;
+            loadPreview();
+        }
+
+        function renderCopyEditor() {
+            renderCopyPageOptions();
+            renderCopyBlockOptions();
+            setMiniStatus(copyStatus, `${(currentCopy.items || []).length} editable text block${(currentCopy.items || []).length === 1 ? '' : 's'} loaded.`, 'good');
+        }
+
         function localAdminAction(action, payload) {
             if (!isLocalPreview()) return null;
 
@@ -988,6 +1161,20 @@
                     posts,
                     commit: 'local',
                     message: 'Saved posts locally for this preview.'
+                };
+            }
+
+            if (action === 'save-copy') {
+                const copy = {
+                    updatedAt: new Date().toISOString(),
+                    items: payload.copy.items || []
+                };
+                localStorage.setItem('ddLocalSiteCopy', JSON.stringify(copy));
+                return {
+                    ok: true,
+                    copy,
+                    commit: 'local',
+                    message: 'Saved site text locally for this preview.'
                 };
             }
 
@@ -1044,14 +1231,21 @@
         async function loadAdminData() {
             setMiniStatus(siteSettingsStatus, 'Loading current settings...');
             setMiniStatus(postsStatus, 'Loading posts...');
-            const [settings, postsData] = await Promise.all([
+            setMiniStatus(copyStatus, 'Loading editable text...');
+            const [settings, postsData, copyData] = await Promise.all([
                 fetchJson('/data/site-settings.json', {}),
-                fetchJson('/data/site-posts.json', { posts: [] })
+                fetchJson('/data/site-posts.json', { posts: [] }),
+                fetchJson('/data/site-copy.json', { items: [] })
             ]);
 
             renderSettings(settings);
             currentPosts = Array.isArray(postsData.posts) ? postsData.posts : [];
+            currentCopy = {
+                updatedAt: copyData.updatedAt || new Date().toISOString(),
+                items: Array.isArray(copyData.items) ? copyData.items : []
+            };
             renderPostList();
+            renderCopyEditor();
             setMiniStatus(siteSettingsStatus, `Loaded. Last updated: ${currentSettings.updatedAt || 'unknown'}.`, 'good');
             setMiniStatus(postsStatus, `${currentPosts.length} post${currentPosts.length === 1 ? '' : 's'} loaded.`, 'good');
             setMiniStatus(trafficStatus, 'Traffic changes commit updated settings and Vercel routing.');
@@ -1236,6 +1430,47 @@
         });
 
         clearPostButton.addEventListener('click', clearPostEditor);
+
+        copyPageFilter.addEventListener('change', () => {
+            renderCopyBlockOptions();
+            previewSelectedCopyPage();
+        });
+
+        copyBlockSelect.addEventListener('change', () => {
+            renderSelectedCopy();
+            previewSelectedCopyPage();
+        });
+
+        copyValueInput.addEventListener('input', () => {
+            const item = selectedCopyItem();
+            if (!item) return;
+            item.value = copyValueInput.value;
+            setMiniStatus(copyStatus, 'Text changed locally. Click Save Text to publish it.');
+        });
+
+        reloadCopyButton.addEventListener('click', loadAdminData);
+
+        saveCopyButton.addEventListener('click', async () => {
+            const item = selectedCopyItem();
+            if (item) item.value = copyValueInput.value;
+
+            saveCopyButton.disabled = true;
+            setMiniStatus(copyStatus, 'Saving site text...');
+
+            try {
+                const result = await adminAction('save-copy', {
+                    copy: collectCopyPayload()
+                });
+                currentCopy = result.copy;
+                renderCopyEditor();
+                refreshPreview.click();
+                setMiniStatus(copyStatus, `${result.message} Commit: ${String(result.commit).slice(0, 7)}.`, 'good');
+            } catch (error) {
+                setMiniStatus(copyStatus, error.message || 'Could not save site text.', 'bad');
+            } finally {
+                saveCopyButton.disabled = false;
+            }
+        });
 
         postEditorForm.addEventListener('submit', (event) => {
             event.preventDefault();

@@ -4,6 +4,7 @@ const DEFAULT_REPO = "Detail-Dogs-Site-Design-";
 const DEFAULT_BRANCH = "main";
 const SETTINGS_PATH = "data/site-settings.json";
 const POSTS_PATH = "data/site-posts.json";
+const COPY_PATH = "data/site-copy.json";
 const VERCEL_PATH = "vercel.json";
 
 const PROTECTED_REWRITES = [
@@ -99,6 +100,23 @@ function cleanPosts(input) {
                 createdAt
             };
         })
+    };
+}
+
+function cleanCopy(input) {
+    const items = Array.isArray(input.items) ? input.items : [];
+    const now = new Date().toISOString();
+    return {
+        updatedAt: now,
+        items: items.slice(0, 80).map((item, index) => ({
+            id: String(item.id || `copy-item-${index + 1}`).trim().slice(0, 90),
+            page: String(item.page || "Site").trim().slice(0, 50),
+            path: String(item.path || "/").trim().slice(0, 120),
+            label: String(item.label || `Text block ${index + 1}`).trim().slice(0, 90),
+            selector: assertString(item.selector, "Copy selector", 180),
+            mode: item.mode === "html" ? "html" : "text",
+            value: String(item.value || "").trim().slice(0, 1600)
+        }))
     };
 }
 
@@ -221,6 +239,12 @@ module.exports = async function handler(request, response) {
             const posts = cleanPosts(payload.posts || {});
             const commit = await commitFiles([{ path: POSTS_PATH, content: posts }], "Update site posts from dev tools");
             return sendJson(response, 200, { ok: true, posts, commit, message: "Site posts saved." });
+        }
+
+        if (action === "save-copy") {
+            const copy = cleanCopy(payload.copy || {});
+            const commit = await commitFiles([{ path: COPY_PATH, content: copy }], "Update site text from dev tools");
+            return sendJson(response, 200, { ok: true, copy, commit, message: "Site text saved." });
         }
 
         if (action === "set-traffic") {
