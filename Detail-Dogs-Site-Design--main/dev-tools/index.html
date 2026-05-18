@@ -455,6 +455,36 @@
             min-height: 145px;
         }
 
+        .design-board {
+            display: grid;
+            gap: 0.8rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--line);
+            background: rgba(4, 9, 18, 0.7);
+        }
+
+        .design-grid {
+            display: grid;
+            grid-template-columns: minmax(260px, 1.2fr) repeat(3, minmax(90px, 0.35fr)) minmax(110px, 0.45fr);
+            gap: 0.65rem;
+            align-items: end;
+        }
+
+        .design-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .design-status-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         button,
         .dev-link {
             min-height: 40px;
@@ -518,7 +548,8 @@
             }
 
             .copy-controls,
-            .copy-editor-grid {
+            .copy-editor-grid,
+            .design-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -685,6 +716,35 @@
             </div>
             <p class="mini-status" id="copyStatus" aria-live="polite">Loading editable text...</p>
         </section>
+        <section class="design-board" aria-labelledby="design-title">
+            <div class="copy-board-header">
+                <div>
+                    <h2 class="dev-title" id="design-title">Text Design</h2>
+                    <p class="panel-note">Scan the current preview page, pick any text, then edit the text, size, position, and rotation.</p>
+                </div>
+                <div class="design-actions">
+                    <button id="scanTextButton" type="button">Scan Page Text</button>
+                    <button id="applyDesignButton" type="button">Apply Preview</button>
+                    <button id="saveDesignButton" type="button">Save Design</button>
+                    <button id="resetLocalDesignButton" type="button">Reset Local Design</button>
+                </div>
+            </div>
+            <div class="field-grid">
+                <label class="admin-label">Text element<select id="designTextSelect"></select></label>
+                <label class="admin-label">Text<textarea id="designTextInput"></textarea></label>
+            </div>
+            <div class="design-grid">
+                <label class="admin-label">Font size<input id="designFontSizeInput" type="text" placeholder="Example: 3rem, 42px"></label>
+                <label class="admin-label">Move X<input id="designXInput" type="number" step="1" value="0"></label>
+                <label class="admin-label">Move Y<input id="designYInput" type="number" step="1" value="0"></label>
+                <label class="admin-label">Rotation<input id="designRotationInput" type="number" step="1" value="0"></label>
+                <label class="admin-label">Layer<input id="designZInput" type="number" step="1" value="2"></label>
+            </div>
+            <div class="design-status-line">
+                <p class="mini-status" id="designStatus" aria-live="polite">Open a page in the preview, then scan page text.</p>
+                <p class="panel-note">Position is saved as a visual offset from the original layout so pages stay responsive.</p>
+            </div>
+        </section>
         <section class="preview-zone" aria-label="Site preview">
             <div class="preview-frame-wrap" id="previewWrap">
                 <iframe id="previewFrame" title="Detail Dogs site preview"></iframe>
@@ -748,10 +808,24 @@
         const saveCopyButton = document.getElementById('saveCopyButton');
         const reloadCopyButton = document.getElementById('reloadCopyButton');
         const resetLocalCopyButton = document.getElementById('resetLocalCopyButton');
+        const scanTextButton = document.getElementById('scanTextButton');
+        const designTextSelect = document.getElementById('designTextSelect');
+        const designTextInput = document.getElementById('designTextInput');
+        const designFontSizeInput = document.getElementById('designFontSizeInput');
+        const designXInput = document.getElementById('designXInput');
+        const designYInput = document.getElementById('designYInput');
+        const designRotationInput = document.getElementById('designRotationInput');
+        const designZInput = document.getElementById('designZInput');
+        const applyDesignButton = document.getElementById('applyDesignButton');
+        const saveDesignButton = document.getElementById('saveDesignButton');
+        const resetLocalDesignButton = document.getElementById('resetLocalDesignButton');
+        const designStatus = document.getElementById('designStatus');
         const params = new URLSearchParams(window.location.search);
         let currentSettings = null;
         let currentPosts = [];
         let currentCopy = { items: [] };
+        let currentDesign = { items: [] };
+        let scannedTextElements = [];
 
         function isAdmin() {
             return document.cookie.split(';').some((cookie) => {
@@ -919,6 +993,9 @@
                 if (isLocalPreview() && path.endsWith('site-copy.json')) {
                     return JSON.parse(localStorage.getItem('ddLocalSiteCopy') || 'null') || data;
                 }
+                if (isLocalPreview() && path.endsWith('site-design.json')) {
+                    return JSON.parse(localStorage.getItem('ddLocalSiteDesign') || 'null') || data;
+                }
                 return data;
             } catch (error) {
                 if (isLocalPreview() && path.endsWith('site-settings.json')) {
@@ -929,6 +1006,9 @@
                 }
                 if (isLocalPreview() && path.endsWith('site-copy.json')) {
                     return JSON.parse(localStorage.getItem('ddLocalSiteCopy') || 'null') || fallback;
+                }
+                if (isLocalPreview() && path.endsWith('site-design.json')) {
+                    return JSON.parse(localStorage.getItem('ddLocalSiteDesign') || 'null') || fallback;
                 }
                 return fallback;
             }
@@ -1135,6 +1215,195 @@
             setMiniStatus(copyStatus, `${(currentCopy.items || []).length} editable text block${(currentCopy.items || []).length === 1 ? '' : 's'} loaded.`, 'good');
         }
 
+        function previewDocument() {
+            try {
+                return previewFrame.contentDocument || previewFrame.contentWindow.document;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function cssEscape(value) {
+            if (window.CSS && CSS.escape) return CSS.escape(value);
+            return String(value).replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+        }
+
+        function uniqueSelector(element) {
+            const doc = element.ownerDocument;
+            if (element.id) return `#${cssEscape(element.id)}`;
+
+            const parts = [];
+            let current = element;
+            while (current && current.nodeType === 1 && current !== doc.body) {
+                let part = current.tagName.toLowerCase();
+                const stableClasses = Array.from(current.classList || [])
+                    .filter((name) => !name.startsWith('visible') && !name.startsWith('active'))
+                    .slice(0, 2);
+                if (stableClasses.length) {
+                    part += stableClasses.map((name) => `.${cssEscape(name)}`).join('');
+                }
+
+                const parent = current.parentElement;
+                if (parent) {
+                    const siblings = Array.from(parent.children).filter((child) => child.tagName === current.tagName);
+                    if (siblings.length > 1) {
+                        part += `:nth-of-type(${siblings.indexOf(current) + 1})`;
+                    }
+                }
+
+                parts.unshift(part);
+                current = parent;
+            }
+
+            return parts.join(' > ');
+        }
+
+        function textLabel(element) {
+            return String(element.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 82);
+        }
+
+        function currentPreviewPath() {
+            return normalizePath(targetInput.value);
+        }
+
+        function designForScan(scan) {
+            return (currentDesign.items || []).find((item) => {
+                return item.path === currentPreviewPath() && item.selector === scan.selector;
+            });
+        }
+
+        function selectedScan() {
+            return scannedTextElements.find((item) => item.selector === designTextSelect.value) || null;
+        }
+
+        function scanPreviewText() {
+            const doc = previewDocument();
+            if (!doc || !doc.body) {
+                setMiniStatus(designStatus, 'Preview page is not ready yet. Refresh the preview and scan again.', 'bad');
+                return;
+            }
+
+            const selectors = [
+                'main h1', 'main h2', 'main h3', 'main h4', 'main p', 'main a', 'main button',
+                'main span', 'main strong', 'main li', 'main label', 'nav a', 'footer p', 'footer a',
+                '.hero-badge', '.section-subtitle', '.service-pill', '.stat-value', '.stat-label'
+            ].join(',');
+            const seen = new Set();
+            scannedTextElements = Array.from(doc.body.querySelectorAll(selectors))
+                .filter((element) => {
+                    const text = textLabel(element);
+                    if (!text || text.length < 2) return false;
+                    const rect = element.getBoundingClientRect();
+                    if (rect.width < 2 || rect.height < 2) return false;
+                    const style = doc.defaultView.getComputedStyle(element);
+                    if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return false;
+                    const selector = uniqueSelector(element);
+                    if (seen.has(selector)) return false;
+                    seen.add(selector);
+                    return true;
+                })
+                .slice(0, 220)
+                .map((element, index) => {
+                    const selector = uniqueSelector(element);
+                    const computed = doc.defaultView.getComputedStyle(element);
+                    const override = designForScan({ selector }) || {};
+                    return {
+                        id: `${currentPreviewPath()}::${selector}`,
+                        selector,
+                        label: `${index + 1}. ${textLabel(element)}`,
+                        originalText: textLabel(element),
+                        text: override.text || textLabel(element),
+                        fontSize: override.fontSize || computed.fontSize,
+                        x: Number(override.x) || 0,
+                        y: Number(override.y) || 0,
+                        rotation: Number(override.rotation) || 0,
+                        zIndex: override.zIndex || '2'
+                    };
+                });
+
+            designTextSelect.innerHTML = scannedTextElements.map((item) => {
+                return `<option value="${item.selector.replaceAll('"', '&quot;')}">${item.label.replaceAll('<', '&lt;')}</option>`;
+            }).join('');
+            renderSelectedDesign();
+            setMiniStatus(designStatus, `${scannedTextElements.length} text element${scannedTextElements.length === 1 ? '' : 's'} found on this page.`, 'good');
+        }
+
+        function renderSelectedDesign() {
+            const scan = selectedScan();
+            if (!scan) {
+                designTextInput.value = '';
+                designFontSizeInput.value = '';
+                designXInput.value = 0;
+                designYInput.value = 0;
+                designRotationInput.value = 0;
+                designZInput.value = 2;
+                return;
+            }
+
+            designTextInput.value = scan.text;
+            designFontSizeInput.value = scan.fontSize;
+            designXInput.value = scan.x;
+            designYInput.value = scan.y;
+            designRotationInput.value = scan.rotation;
+            designZInput.value = scan.zIndex;
+        }
+
+        function upsertCurrentDesignFromForm() {
+            const scan = selectedScan();
+            if (!scan) return null;
+
+            const item = {
+                id: scan.id,
+                page: pagePicker.options[pagePicker.selectedIndex]?.textContent || 'Site',
+                path: currentPreviewPath(),
+                label: scan.originalText || scan.label,
+                selector: scan.selector,
+                text: designTextInput.value,
+                fontSize: designFontSizeInput.value.trim(),
+                x: Number(designXInput.value) || 0,
+                y: Number(designYInput.value) || 0,
+                rotation: Number(designRotationInput.value) || 0,
+                transformOrigin: 'center',
+                zIndex: designZInput.value || '2'
+            };
+
+            currentDesign.items = [
+                item,
+                ...(currentDesign.items || []).filter((existing) => {
+                    return !(existing.path === item.path && existing.selector === item.selector);
+                })
+            ];
+            scan.text = item.text;
+            scan.fontSize = item.fontSize;
+            scan.x = item.x;
+            scan.y = item.y;
+            scan.rotation = item.rotation;
+            scan.zIndex = item.zIndex;
+            return item;
+        }
+
+        function applyDesignItemToPreview(item) {
+            const doc = previewDocument();
+            if (!doc || !item) return;
+            const element = doc.querySelector(item.selector);
+            if (!element) return;
+
+            element.textContent = item.text;
+            element.style.fontSize = item.fontSize || '';
+            const style = doc.defaultView.getComputedStyle(element);
+            if (style.display === 'inline') element.style.display = 'inline-block';
+            if (style.position === 'static') element.style.position = 'relative';
+            element.style.transform = `translate(${Number(item.x) || 0}px, ${Number(item.y) || 0}px) rotate(${Number(item.rotation) || 0}deg)`;
+            element.style.transformOrigin = item.transformOrigin || 'center';
+            element.style.zIndex = item.zIndex || '2';
+        }
+
+        function collectDesignPayload() {
+            return {
+                items: (currentDesign.items || []).filter((item) => item && item.selector && item.path)
+            };
+        }
+
         function localAdminAction(action, payload) {
             if (!isLocalPreview()) return null;
 
@@ -1177,6 +1446,20 @@
                     copy,
                     commit: 'local',
                     message: 'Saved site text locally for this preview.'
+                };
+            }
+
+            if (action === 'save-design') {
+                const design = {
+                    updatedAt: new Date().toISOString(),
+                    items: payload.design.items || []
+                };
+                localStorage.setItem('ddLocalSiteDesign', JSON.stringify(design));
+                return {
+                    ok: true,
+                    design,
+                    commit: 'local',
+                    message: 'Saved text design locally for this preview.'
                 };
             }
 
@@ -1234,10 +1517,11 @@
             setMiniStatus(siteSettingsStatus, 'Loading current settings...');
             setMiniStatus(postsStatus, 'Loading posts...');
             setMiniStatus(copyStatus, 'Loading editable text...');
-            const [settings, postsData, copyData] = await Promise.all([
+            const [settings, postsData, copyData, designData] = await Promise.all([
                 fetchJson('/data/site-settings.json', {}),
                 fetchJson('/data/site-posts.json', { posts: [] }),
-                fetchJson('/data/site-copy.json', { items: [] })
+                fetchJson('/data/site-copy.json', { items: [] }),
+                fetchJson('/data/site-design.json', { items: [] })
             ]);
 
             renderSettings(settings);
@@ -1245,6 +1529,10 @@
             currentCopy = {
                 updatedAt: copyData.updatedAt || new Date().toISOString(),
                 items: Array.isArray(copyData.items) ? copyData.items : []
+            };
+            currentDesign = {
+                updatedAt: designData.updatedAt || new Date().toISOString(),
+                items: Array.isArray(designData.items) ? designData.items : []
             };
             renderPostList();
             renderCopyEditor();
@@ -1330,9 +1618,53 @@
             targetInput.value = pagePicker.value;
             loadPreview();
         });
+        previewFrame.addEventListener('load', () => {
+            if (!devShell.hidden) {
+                window.setTimeout(scanPreviewText, 250);
+            }
+        });
         refreshPreview.addEventListener('click', loadPreview);
         targetInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') loadPreview();
+        });
+
+        scanTextButton.addEventListener('click', scanPreviewText);
+        designTextSelect.addEventListener('change', renderSelectedDesign);
+        applyDesignButton.addEventListener('click', () => {
+            const item = upsertCurrentDesignFromForm();
+            applyDesignItemToPreview(item);
+            setMiniStatus(designStatus, 'Applied in preview. Click Save Design to keep it.', 'good');
+        });
+        [designTextInput, designFontSizeInput, designXInput, designYInput, designRotationInput, designZInput].forEach((input) => {
+            input.addEventListener('input', () => {
+                const item = upsertCurrentDesignFromForm();
+                applyDesignItemToPreview(item);
+                setMiniStatus(designStatus, 'Design changed in preview. Click Save Design to keep it.');
+            });
+        });
+        resetLocalDesignButton.addEventListener('click', () => {
+            localStorage.removeItem('ddLocalSiteDesign');
+            currentDesign = { items: [] };
+            setMiniStatus(designStatus, 'Local text design overrides cleared. Refreshing preview...', 'good');
+            loadPreview();
+        });
+        saveDesignButton.addEventListener('click', async () => {
+            upsertCurrentDesignFromForm();
+            saveDesignButton.disabled = true;
+            setMiniStatus(designStatus, 'Saving text design...');
+
+            try {
+                const result = await adminAction('save-design', {
+                    design: collectDesignPayload()
+                });
+                currentDesign = result.design;
+                setMiniStatus(designStatus, `${result.message} Commit: ${String(result.commit).slice(0, 7)}.`, 'good');
+                loadPreview();
+            } catch (error) {
+                setMiniStatus(designStatus, error.message || 'Could not save text design.', 'bad');
+            } finally {
+                saveDesignButton.disabled = false;
+            }
         });
 
         galleryUploadForm.addEventListener('submit', async (event) => {

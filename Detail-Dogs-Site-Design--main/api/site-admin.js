@@ -5,6 +5,7 @@ const DEFAULT_BRANCH = "main";
 const SETTINGS_PATH = "data/site-settings.json";
 const POSTS_PATH = "data/site-posts.json";
 const COPY_PATH = "data/site-copy.json";
+const DESIGN_PATH = "data/site-design.json";
 const VERCEL_PATH = "vercel.json";
 
 const PROTECTED_REWRITES = [
@@ -116,6 +117,28 @@ function cleanCopy(input) {
             selector: assertString(item.selector, "Copy selector", 180),
             mode: item.mode === "html" ? "html" : "text",
             value: String(item.value || "").trim().slice(0, 1600)
+        }))
+    };
+}
+
+function cleanDesign(input) {
+    const items = Array.isArray(input.items) ? input.items : [];
+    const now = new Date().toISOString();
+    return {
+        updatedAt: now,
+        items: items.slice(0, 180).map((item, index) => ({
+            id: String(item.id || `design-item-${index + 1}`).trim().slice(0, 120),
+            page: String(item.page || "Site").trim().slice(0, 60),
+            path: String(item.path || "/").trim().slice(0, 120),
+            label: String(item.label || `Text ${index + 1}`).trim().slice(0, 120),
+            selector: assertString(item.selector, "Design selector", 260),
+            text: String(item.text || "").trim().slice(0, 1800),
+            fontSize: String(item.fontSize || "").trim().slice(0, 30),
+            x: Number(item.x) || 0,
+            y: Number(item.y) || 0,
+            rotation: Number(item.rotation) || 0,
+            transformOrigin: String(item.transformOrigin || "center").trim().slice(0, 40),
+            zIndex: String(item.zIndex || "2").trim().slice(0, 20)
         }))
     };
 }
@@ -245,6 +268,12 @@ module.exports = async function handler(request, response) {
             const copy = cleanCopy(payload.copy || {});
             const commit = await commitFiles([{ path: COPY_PATH, content: copy }], "Update site text from dev tools");
             return sendJson(response, 200, { ok: true, copy, commit, message: "Site text saved." });
+        }
+
+        if (action === "save-design") {
+            const design = cleanDesign(payload.design || {});
+            const commit = await commitFiles([{ path: DESIGN_PATH, content: design }], "Update site text design from dev tools");
+            return sendJson(response, 200, { ok: true, design, commit, message: "Text design saved." });
         }
 
         if (action === "set-traffic") {
