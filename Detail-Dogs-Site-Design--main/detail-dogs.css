@@ -478,7 +478,7 @@ nav .site-logo-link {
 
 .gallery-feature-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
     align-items: stretch;
     margin-bottom: 2.5rem;
@@ -543,28 +543,6 @@ nav .site-logo-link {
     transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.before-label,
-.after-label {
-    position: absolute;
-    top: 1rem;
-    z-index: 2;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    color: var(--text-main);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(0, 0, 0, 0.42);
-    padding: 0.4rem 0.55rem;
-}
-
-.before-label {
-    left: 1rem;
-}
-
-.after-label {
-    right: 1rem;
-}
-
 .before-after-range {
     width: 100%;
     accent-color: var(--palette-teal);
@@ -576,29 +554,29 @@ nav .site-logo-link {
 
 .gallery-result-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: 1rem;
 }
 
 .gallery-result-card {
-    display: grid;
-    grid-template-rows: 220px 1fr;
-    gap: 1rem;
-    min-height: 440px;
-    padding: 1rem;
+    display: block;
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
     border: 1px solid var(--card-border);
     background: var(--card-bg);
     color: var(--text-main);
 }
 
 .gallery-result-card img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.gallery-result-card h2,
-.gallery-cta-panel h2 {
+.gallery-result-card h2 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2.2rem;
     line-height: 0.95;
@@ -608,17 +586,6 @@ nav .site-logo-link {
 
 .gallery-result-card p {
     color: var(--text-muted);
-}
-
-.gallery-cta-panel {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 1.25rem;
-    align-items: center;
-    margin-top: 2.5rem;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 31, 79, 0.44);
-    background: linear-gradient(135deg, rgba(226, 233, 238, 0.1), rgba(255, 31, 79, 0.16), rgba(255, 122, 0, 0.12), rgba(0, 111, 232, 0.2));
 }
 
 .membership-policy-list {
@@ -735,11 +702,6 @@ nav .site-logo-link {
     .before-after-stage,
     .before-after-image {
         min-height: 320px;
-    }
-
-    .gallery-cta-panel {
-        align-items: flex-start;
-        grid-template-columns: 1fr;
     }
 
     .subpage-main {

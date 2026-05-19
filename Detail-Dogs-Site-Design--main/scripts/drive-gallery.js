@@ -64,16 +64,10 @@
     }
 
     function renderGalleryCard(image) {
-        const label = categoryLabel(image.category);
         const title = imageText(image);
 
         return `<article class="gallery-result-card" data-category="${escapeHtml(image.category || "featured")}">
                     <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || title)}" loading="lazy">
-                    <div>
-                        <span class="service-pill">${escapeHtml(label)}</span>
-                        <h2>${escapeHtml(title)}</h2>
-                        <p>Synced from the Detail Dogs Google Drive gallery folder.</p>
-                    </div>
                 </article>`;
     }
 
@@ -97,7 +91,7 @@
                 item.style.display = filter === "all" || item.dataset.category === filter ? "block" : "none";
             });
             document.querySelectorAll(".gallery-result-card").forEach((item) => {
-                item.style.display = filter === "all" || item.dataset.category === filter ? "grid" : "none";
+                item.style.display = filter === "all" || item.dataset.category === filter ? "block" : "none";
             });
         });
     }
@@ -113,17 +107,11 @@
         featureAreas.forEach((area) => {
             const before = area.querySelector(".before-after-stage > .before-after-image");
             const after = area.querySelector(".before-after-overlay .before-after-image");
-            const title = area.querySelector("[data-drive-gallery-feature-title]");
-            const copy = area.querySelector("[data-drive-gallery-feature-copy]");
 
             if (before) before.src = images[0].src;
             if (before) before.alt = images[0].alt || imageText(images[0]);
             if (after) after.src = (images[1] || images[0]).src;
             if (after) after.alt = (images[1] || images[0]).alt || imageText(images[1] || images[0]);
-            if (title) title.textContent = imageText(images[0]);
-            if (copy) copy.textContent = images[0].uploadedFrom === "local-dev-tools"
-                ? "Latest local preview upload from the Detail Dogs dev tools."
-                : "Latest photos synced from the Detail Dogs Google Drive gallery folder.";
         });
 
         galleryGrids.forEach((grid) => {
