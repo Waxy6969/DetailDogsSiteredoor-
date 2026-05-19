@@ -465,7 +465,7 @@
 
         .design-grid {
             display: grid;
-            grid-template-columns: minmax(260px, 1.2fr) repeat(3, minmax(90px, 0.35fr)) minmax(110px, 0.45fr);
+            grid-template-columns: minmax(140px, 0.5fr) minmax(240px, 1.1fr) repeat(3, minmax(90px, 0.35fr)) minmax(110px, 0.45fr);
             gap: 0.65rem;
             align-items: end;
         }
@@ -720,7 +720,7 @@
             <div class="copy-board-header">
                 <div>
                     <h2 class="dev-title" id="design-title">Click Text Editor</h2>
-                    <p class="panel-note">Turn on click edit, click text directly in the preview, then change the words, size, position, and rotation.</p>
+                    <p class="panel-note">Turn on click edit, click text directly in the preview, then change the words, size, position, rotation, and web/mobile layout scope.</p>
                 </div>
                 <div class="design-actions">
                     <button id="scanTextButton" type="button">Click Text Edit</button>
@@ -739,6 +739,7 @@
                 <label class="admin-label">Text<textarea id="designTextInput"></textarea></label>
             </div>
             <div class="design-grid">
+                <label class="admin-label">Layout<select id="designDeviceInput"><option value="web">Web only</option><option value="mobile">Mobile only</option><option value="both">Both</option></select></label>
                 <label class="admin-label">Font size<input id="designFontSizeInput" type="text" placeholder="Example: 3rem, 42px"></label>
                 <label class="admin-label">Move X<input id="designXInput" type="number" step="1" value="0"></label>
                 <label class="admin-label">Move Y<input id="designYInput" type="number" step="1" value="0"></label>
@@ -746,8 +747,8 @@
                 <label class="admin-label">Layer<input id="designZInput" type="number" step="1" value="2"></label>
             </div>
             <div class="design-status-line">
-                <p class="mini-status" id="designStatus" aria-live="polite">Open a page in the preview, then scan page text.</p>
-                <p class="panel-note">Position is saved as a visual offset from the original layout so pages stay responsive.</p>
+                <p class="mini-status" id="designStatus" aria-live="polite">Open a page in the preview, then click visible text to edit it.</p>
+                <p class="panel-note">Use Layout to save web-only and mobile-only versions so each page size can have its own text position.</p>
             </div>
         </section>
         <section class="preview-zone" aria-label="Site preview">
@@ -818,6 +819,7 @@
         const designSelectedLabel = document.getElementById('designSelectedLabel');
         const designSelectorLabel = document.getElementById('designSelectorLabel');
         const designTextInput = document.getElementById('designTextInput');
+        const designDeviceInput = document.getElementById('designDeviceInput');
         const designFontSizeInput = document.getElementById('designFontSizeInput');
         const designXInput = document.getElementById('designXInput');
         const designYInput = document.getElementById('designYInput');
@@ -890,6 +892,9 @@
             webMode.classList.toggle('active', nextMode === 'web');
             mobileMode.classList.toggle('active', nextMode === 'mobile');
             localStorage.setItem('ddDevPreviewMode', nextMode);
+            if (designDeviceInput && (!selectedScan() || designDeviceInput.value !== 'both')) {
+                designDeviceInput.value = nextMode;
+            }
         }
 
         function loadPreview() {
@@ -1276,6 +1281,20 @@
             return normalizePath(targetInput.value);
         }
 
+        function currentPreviewDevice() {
+            return previewWrap.classList.contains('mobile') ? 'mobile' : 'web';
+        }
+
+        function deviceMatches(item, device = currentPreviewDevice()) {
+            return !item.device || item.device === 'both' || item.device === device;
+        }
+
+        function deviceLabel(device) {
+            if (device === 'mobile') return 'Mobile';
+            if (device === 'both') return 'Both';
+            return 'Web';
+        }
+
         function editableTextElement(startElement) {
             const blocked = new Set(['HTML', 'BODY', 'SCRIPT', 'STYLE', 'NOSCRIPT', 'IMG', 'SVG', 'PATH', 'INPUT', 'TEXTAREA', 'SELECT', 'OPTION']);
             let current = startElement && startElement.nodeType === 1 ? startElement : startElement?.parentElement;
@@ -1296,11 +1315,12 @@
             const label = textLabel(element);
 
             return {
-                id: `${currentPreviewPath()}::${selector}`,
+                id: `${currentPreviewPath()}::${override.device || currentPreviewDevice()}::${selector}`,
                 selector,
                 label: `${fallbackIndex + 1}. ${label}`,
                 originalText: label,
                 text: override.text || label,
+                device: override.device || currentPreviewDevice(),
                 fontSize: override.fontSize || computed.fontSize,
                 x: Number(override.x) || 0,
                 y: Number(override.y) || 0,
@@ -1310,9 +1330,10 @@
         }
 
         function designForScan(scan) {
-            return (currentDesign.items || []).find((item) => {
-                return item.path === currentPreviewPath() && item.selector === scan.selector;
+            const matches = (currentDesign.items || []).filter((item) => {
+                return item.path === currentPreviewPath() && item.selector === scan.selector && deviceMatches(item);
             });
+            return matches.find((item) => item.device === currentPreviewDevice()) || matches.find((item) => item.device === 'both') || matches[0];
         }
 
         function selectedScan() {
@@ -1368,12 +1389,14 @@
                 designYInput.value = 0;
                 designRotationInput.value = 0;
                 designZInput.value = 2;
+                designDeviceInput.value = currentPreviewDevice();
                 return;
             }
 
             designSelectedLabel.textContent = scan.originalText || scan.label || 'Selected text';
-            designSelectorLabel.textContent = scan.selector;
+            designSelectorLabel.textContent = `${deviceLabel(scan.device)} / ${scan.selector}`;
             designTextInput.value = scan.text;
+            designDeviceInput.value = scan.device || currentPreviewDevice();
             designFontSizeInput.value = scan.fontSize;
             designXInput.value = scan.x;
             designYInput.value = scan.y;
@@ -1481,11 +1504,12 @@
             if (!scan) return null;
 
             const item = {
-                id: scan.id,
+                id: `${currentPreviewPath()}::${designDeviceInput.value || currentPreviewDevice()}::${scan.selector}`,
                 page: pagePicker.options[pagePicker.selectedIndex]?.textContent || 'Site',
                 path: currentPreviewPath(),
                 label: scan.originalText || scan.label,
                 selector: scan.selector,
+                device: designDeviceInput.value || currentPreviewDevice(),
                 text: designTextInput.value,
                 fontSize: designFontSizeInput.value.trim(),
                 x: Number(designXInput.value) || 0,
@@ -1498,10 +1522,11 @@
             currentDesign.items = [
                 item,
                 ...(currentDesign.items || []).filter((existing) => {
-                    return !(existing.path === item.path && existing.selector === item.selector);
+                    return !(existing.path === item.path && existing.selector === item.selector && (existing.device || 'both') === item.device);
                 })
             ];
             scan.text = item.text;
+            scan.device = item.device;
             scan.fontSize = item.fontSize;
             scan.x = item.x;
             scan.y = item.y;
@@ -1763,7 +1788,7 @@
             applyDesignItemToPreview(item);
             setMiniStatus(designStatus, 'Applied in preview. Click Save Design to keep it.', 'good');
         });
-        [designTextInput, designFontSizeInput, designXInput, designYInput, designRotationInput, designZInput].forEach((input) => {
+        [designTextInput, designDeviceInput, designFontSizeInput, designXInput, designYInput, designRotationInput, designZInput].forEach((input) => {
             input.addEventListener('input', () => {
                 const item = upsertCurrentDesignFromForm();
                 applyDesignItemToPreview(item);

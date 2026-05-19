@@ -132,6 +132,7 @@ function cleanDesign(input) {
             path: String(item.path || "/").trim().slice(0, 120),
             label: String(item.label || `Text ${index + 1}`).trim().slice(0, 120),
             selector: assertString(item.selector, "Design selector", 260),
+            device: ["web", "mobile", "both"].includes(item.device) ? item.device : "both",
             text: String(item.text || "").trim().slice(0, 1800),
             fontSize: String(item.fontSize || "").trim().slice(0, 30),
             x: Number(item.x) || 0,

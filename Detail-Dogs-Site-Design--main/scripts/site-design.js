@@ -22,6 +22,14 @@
         return normalizePath(item.path) === normalizePath(window.location.pathname);
     }
 
+    function currentDevice() {
+        return window.matchMedia("(max-width: 700px)").matches ? "mobile" : "web";
+    }
+
+    function belongsToCurrentDevice(item) {
+        return !item.device || item.device === "both" || item.device === currentDevice();
+    }
+
     function safeNumber(value, fallback = 0) {
         const number = Number(value);
         return Number.isFinite(number) ? number : fallback;
@@ -66,7 +74,7 @@
             if (!response.ok) return;
             const design = localDesign(await response.json());
             const items = Array.isArray(design.items) ? design.items : [];
-            items.filter(belongsToCurrentPage).forEach(applyDesignItem);
+            items.filter((item) => belongsToCurrentPage(item) && belongsToCurrentDevice(item)).forEach(applyDesignItem);
         } catch (error) {
             // Design overrides are optional. Keep the static page usable if they fail.
         }
