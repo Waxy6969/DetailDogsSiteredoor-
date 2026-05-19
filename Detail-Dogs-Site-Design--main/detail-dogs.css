@@ -543,6 +543,28 @@ nav .site-logo-link {
     transform: translate(-50%, -50%) rotate(45deg);
 }
 
+.before-label,
+.after-label {
+    position: absolute;
+    top: 1rem;
+    z-index: 2;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--text-main);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(0, 0, 0, 0.42);
+    padding: 0.4rem 0.55rem;
+}
+
+.before-label {
+    left: 1rem;
+}
+
+.after-label {
+    right: 1rem;
+}
+
 .before-after-range {
     width: 100%;
     accent-color: var(--palette-teal);
