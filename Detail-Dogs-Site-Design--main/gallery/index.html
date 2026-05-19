@@ -97,6 +97,20 @@
         </div>
     </main>
 
+    <div class="gallery-popup gallery-photo-popup" id="galleryPopup" aria-modal="true" role="dialog" aria-label="Gallery photo preview">
+        <div class="popup-overlay"></div>
+        <div class="popup-content">
+            <button class="popup-close" id="popupClose" type="button" aria-label="Close gallery preview">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M15.5 5.9 14.1 4.5 10 8.6 5.9 4.5 4.5 5.9 8.6 10l-4.1 4.1 1.4 1.4L10 11.4l4.1 4.1 1.4-1.4-4.1-4.1 4.1-4.1z"/></svg>
+            </button>
+            <button class="popup-arrow popup-arrow-prev" id="popupPrev" type="button" aria-label="Previous gallery photo">&#8249;</button>
+            <div class="popup-image-container">
+                <img class="popup-image" id="popupImage" src="" alt="Gallery image">
+            </div>
+            <button class="popup-arrow popup-arrow-next" id="popupNext" type="button" aria-label="Next gallery photo">&#8250;</button>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-inner">
             <div class="footer-grid">

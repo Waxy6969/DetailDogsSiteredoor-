@@ -2,6 +2,8 @@
     const galleryGrids = document.querySelectorAll("[data-drive-gallery-grid]");
     const homeGrids = document.querySelectorAll("[data-drive-gallery-home]");
     const featureAreas = document.querySelectorAll("[data-drive-gallery-feature]");
+    let popupItems = [];
+    let popupIndex = 0;
 
     if (!galleryGrids.length && !homeGrids.length && !featureAreas.length) return;
 
@@ -47,26 +49,104 @@
         return image.title || image.name || "Detail Dogs Result";
     }
 
-    function popupFromImage(image) {
+    function popupElements() {
         const popup = document.getElementById("galleryPopup");
         const popupImage = document.getElementById("popupImage");
         const popupPrompt = document.getElementById("popupPrompt");
         const popupStyle = document.getElementById("popupStyle");
+        const popupPrev = document.getElementById("popupPrev");
+        const popupNext = document.getElementById("popupNext");
 
-        if (!popup || !popupImage) return;
+        return { popup, popupImage, popupPrompt, popupStyle, popupPrev, popupNext };
+    }
+
+    function setArrowState() {
+        const { popupPrev, popupNext } = popupElements();
+        const hasMultiple = popupItems.length > 1;
+
+        [popupPrev, popupNext].forEach((button) => {
+            if (!button) return;
+            button.hidden = !hasMultiple;
+            button.disabled = !hasMultiple;
+        });
+    }
+
+    function showPopupItem(index) {
+        const { popup, popupImage, popupPrompt, popupStyle } = popupElements();
+        if (!popup || !popupImage || !popupItems.length) return;
+
+        popupIndex = (index + popupItems.length) % popupItems.length;
+        const image = popupItems[popupIndex];
 
         popupImage.src = image.src;
         popupImage.alt = image.alt || imageText(image);
-        if (popupPrompt) popupPrompt.textContent = imageText(image);
-        if (popupStyle) popupStyle.textContent = categoryLabel(image.category);
+        if (popupPrompt) popupPrompt.textContent = image.title || "";
+        if (popupStyle) popupStyle.textContent = image.category ? categoryLabel(image.category) : "";
+        setArrowState();
         popup.classList.add("active");
         document.body.style.overflow = "hidden";
+    }
+
+    function popupFromImage(image) {
+        popupItems = [image];
+        showPopupItem(0);
+    }
+
+    function visibleGalleryItems() {
+        return Array.from(document.querySelectorAll(".gallery-result-card"))
+            .filter((card) => card.offsetParent !== null && card.style.display !== "none")
+            .map((card) => {
+                const image = card.querySelector("img");
+                if (!image) return null;
+                return {
+                    src: image.currentSrc || image.src,
+                    alt: image.alt || "Detail Dogs gallery photo",
+                    title: card.dataset.galleryTitle || image.alt || "Detail Dogs gallery photo",
+                    category: card.dataset.category || "featured",
+                    card
+                };
+            })
+            .filter(Boolean);
+    }
+
+    function openGalleryCard(card) {
+        popupItems = visibleGalleryItems();
+        const index = popupItems.findIndex((item) => item.card === card);
+        showPopupItem(index >= 0 ? index : 0);
+    }
+
+    function bindGalleryCards() {
+        document.querySelectorAll(".gallery-result-card").forEach((card) => {
+            if (card.dataset.galleryBound === "true") return;
+            card.dataset.galleryBound = "true";
+            card.setAttribute("role", "button");
+            card.setAttribute("tabindex", "0");
+            card.setAttribute("aria-label", "Open gallery photo");
+            card.addEventListener("click", () => openGalleryCard(card));
+            card.addEventListener("keydown", (event) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
+                openGalleryCard(card);
+            });
+        });
+    }
+
+    function closePopup() {
+        const { popup } = popupElements();
+        if (!popup) return;
+        popup.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    function movePopup(direction) {
+        if (!popupItems.length) return;
+        showPopupItem(popupIndex + direction);
     }
 
     function renderGalleryCard(image) {
         const title = imageText(image);
 
-        return `<article class="gallery-result-card" data-category="${escapeHtml(image.category || "featured")}">
+        return `<article class="gallery-result-card" data-category="${escapeHtml(image.category || "featured")}" data-gallery-title="${escapeHtml(title)}">
                     <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || title)}" loading="lazy">
                 </article>`;
     }
@@ -96,6 +176,29 @@
         });
     }
 
+    function bindPopupControls() {
+        const { popup, popupPrev, popupNext } = popupElements();
+        const closeButton = document.getElementById("popupClose");
+        const overlay = popup ? popup.querySelector(".popup-overlay") : null;
+
+        if (popup && popup.dataset.galleryPopupBound !== "true") {
+            popup.dataset.galleryPopupBound = "true";
+            if (closeButton) closeButton.addEventListener("click", closePopup);
+            if (overlay) overlay.addEventListener("click", closePopup);
+            if (popupPrev) popupPrev.addEventListener("click", () => movePopup(-1));
+            if (popupNext) popupNext.addEventListener("click", () => movePopup(1));
+            document.addEventListener("keydown", (event) => {
+                if (!popup.classList.contains("active")) return;
+                if (event.key === "Escape") closePopup();
+                if (event.key === "ArrowLeft") movePopup(-1);
+                if (event.key === "ArrowRight") movePopup(1);
+            });
+        }
+    }
+
+    bindPopupControls();
+    bindGalleryCards();
+
     try {
         const response = await fetch("/images/gallery/drive-gallery.json", { cache: "no-store" });
         if (!response.ok) return;
@@ -117,6 +220,7 @@
         galleryGrids.forEach((grid) => {
             grid.innerHTML = images.map(renderGalleryCard).join("");
         });
+        bindGalleryCards();
 
         homeGrids.forEach((grid) => {
             const homeImages = images.slice(0, 6);

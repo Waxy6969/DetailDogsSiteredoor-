@@ -567,6 +567,7 @@ nav .site-logo-link {
     border: 1px solid var(--card-border);
     background: var(--card-bg);
     color: var(--text-main);
+    cursor: zoom-in;
 }
 
 .gallery-result-card img {
@@ -574,6 +575,17 @@ nav .site-logo-link {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.22s ease;
+}
+
+.gallery-result-card:hover img,
+.gallery-result-card:focus-visible img {
+    transform: scale(1.035);
+}
+
+.gallery-result-card:focus-visible {
+    outline: 2px solid var(--palette-teal);
+    outline-offset: 4px;
 }
 
 .gallery-result-card h2 {
@@ -586,6 +598,60 @@ nav .site-logo-link {
 
 .gallery-result-card p {
     color: var(--text-muted);
+}
+
+.gallery-photo-popup .popup-content {
+    width: min(92vw, 1180px);
+    max-width: 1180px;
+    max-height: 92vh;
+    background: rgba(0, 0, 0, 0.58);
+    border-color: rgba(24, 240, 228, 0.22);
+}
+
+.gallery-photo-popup .popup-image-container {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: min(82vh, 820px);
+    max-height: 82vh;
+    background: rgba(0, 0, 0, 0.52);
+}
+
+.gallery-photo-popup .popup-image {
+    width: auto;
+    max-width: 100%;
+    max-height: 82vh;
+    object-fit: contain;
+}
+
+.popup-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 11;
+    width: 48px;
+    height: 70px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.36);
+    color: #fff;
+    cursor: pointer;
+    font: 700 3rem/1 Arial, Helvetica, sans-serif;
+    transform: translateY(-50%);
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.popup-arrow:hover,
+.popup-arrow:focus-visible {
+    border-color: rgba(24, 240, 228, 0.72);
+    background: rgba(24, 240, 228, 0.18);
+    outline: none;
+}
+
+.popup-arrow-prev {
+    left: 1rem;
+}
+
+.popup-arrow-next {
+    right: 1rem;
 }
 
 .membership-policy-list {
@@ -702,6 +768,33 @@ nav .site-logo-link {
     .before-after-stage,
     .before-after-image {
         min-height: 320px;
+    }
+
+    .gallery-photo-popup .popup-content {
+        width: 96vw;
+    }
+
+    .gallery-photo-popup .popup-image-container {
+        height: 72vh;
+        max-height: 72vh;
+    }
+
+    .gallery-photo-popup .popup-image {
+        max-height: 72vh;
+    }
+
+    .popup-arrow {
+        width: 40px;
+        height: 56px;
+        font-size: 2.25rem;
+    }
+
+    .popup-arrow-prev {
+        left: 0.5rem;
+    }
+
+    .popup-arrow-next {
+        right: 0.5rem;
     }
 
     .subpage-main {

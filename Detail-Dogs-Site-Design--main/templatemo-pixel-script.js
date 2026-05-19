@@ -100,7 +100,7 @@ document.querySelectorAll(".filter-tab").forEach((tab) => {
             item.style.display = filter === "all" || item.dataset.category === filter ? "grid" : "none";
         });
         document.querySelectorAll(".gallery-result-card").forEach((item) => {
-            item.style.display = filter === "all" || item.dataset.category === filter ? "grid" : "none";
+            item.style.display = filter === "all" || item.dataset.category === filter ? "block" : "none";
         });
     });
 });
