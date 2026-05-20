@@ -440,5 +440,18 @@
     <script src="/scripts/site-posts.js"></script>
     <script src="scripts/drive-gallery.js"></script>
     <script src="/scripts/admin-dev-tools.js"></script>
+    <script>
+        (() => {
+            const heroVideo = document.querySelector('.hero-background-video');
+            if (!heroVideo) return;
+
+            const slowHeroVideo = () => {
+                heroVideo.playbackRate = 0.65;
+            };
+
+            slowHeroVideo();
+            heroVideo.addEventListener('loadedmetadata', slowHeroVideo, { once: true });
+        })();
+    </script>
 </body>
 </html>

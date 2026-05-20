@@ -42,7 +42,21 @@ nav .nav-inner {
     position: relative;
     overflow: hidden;
     isolation: isolate;
+    min-height: calc(100vh + clamp(4rem, 10vh, 8rem));
+    padding-bottom: clamp(7rem, 12vh, 10rem);
     background: #02050c;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+    height: clamp(10rem, 20vh, 16rem);
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(2, 5, 12, 0), rgba(2, 5, 12, 0.72) 58%, #02050c 100%);
 }
 
 .hero::after {
@@ -55,7 +69,7 @@ nav .nav-inner {
         radial-gradient(circle at 12% 26%, rgba(255, 20, 56, 0.46), transparent 32rem),
         radial-gradient(circle at 88% 24%, rgba(8, 123, 255, 0.5), transparent 34rem),
         linear-gradient(90deg, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0.46) 48%, rgba(0, 0, 0, 0.72)),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.46), rgba(0, 0, 0, 0.84));
+        linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.58) 62%, rgba(0, 0, 0, 0.9));
 }
 
 .hero-background-video {
