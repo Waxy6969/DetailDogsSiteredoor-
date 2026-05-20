@@ -1,0 +1,87 @@
+{
+  "profileUrl": "https://www.instagram.com/detail.dogs/",
+  "handle": "@detail.dogs",
+  "updatedAt": "2026-05-19T00:00:00.000Z",
+  "posts": [
+    {
+      "id": "featured-turnaround",
+      "type": "photo",
+      "title": "Featured Turnaround",
+      "caption": "Fresh finish, sharp reflections, and a clean Detail Dogs result.",
+      "src": "/images/gallery/drive/featured/anmp0173-1FDrPNgX.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "interior-reset",
+      "type": "photo",
+      "title": "Interior Reset",
+      "caption": "Deep interior cleanup with the kind of finish that feels new again.",
+      "src": "/images/gallery/drive/interior/anmp0097-1TlV2PDV.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "exterior-gloss",
+      "type": "reel",
+      "title": "Exterior Gloss Reel",
+      "caption": "Wash, shine, and final walkaround energy.",
+      "src": "/images/gallery/drive/exterior/anmp0080-1xtgIDhE.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "paint-correction",
+      "type": "photo",
+      "title": "Paint Correction",
+      "caption": "Surface clarity and gloss brought back into focus.",
+      "src": "/images/gallery/drive/paint-correction/anmp0178-1tUWW2RO.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "ceramic-finish",
+      "type": "reel",
+      "title": "Ceramic Finish Reel",
+      "caption": "Protection, pop, and a finish made to stay cleaner longer.",
+      "src": "/images/gallery/drive/ceramic/anmp0172-16jbQsB6.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "behind-the-scenes",
+      "type": "photo",
+      "title": "Behind the Scenes",
+      "caption": "Tools, prep, process, and the work behind the result.",
+      "src": "/images/gallery/drive/shop/img-1164-1Px8lZ58.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    }
+  ],
+  "stories": [
+    {
+      "id": "story-featured",
+      "label": "Fresh Drop",
+      "src": "/images/gallery/drive/featured/anmp0169-1tDlHB1E.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "story-interior",
+      "label": "Interior",
+      "src": "/images/gallery/drive/interior/anmp0096-1B_V4tDP.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "story-exterior",
+      "label": "Exterior",
+      "src": "/images/gallery/drive/exterior/anmp0076-1yszVmTj.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "story-correction",
+      "label": "Correction",
+      "src": "/images/gallery/drive/paint-correction/anmp0175-19_4AHAx.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    },
+    {
+      "id": "story-shop",
+      "label": "Shop",
+      "src": "/images/gallery/drive/shop/img-1168-16HBBjdv.jpg",
+      "url": "https://www.instagram.com/detail.dogs/"
+    }
+  ]
+}
