@@ -5,19 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Detail Dogs LLC | Site Under Construction</title>
-    <meta name="description" content="Detail Dogs LLC is currently updating the website. Call or email to book service.">
+    <meta name="description" content="Detail Dogs LLC is currently updating the website. Call, email, or follow us on Instagram to book service.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --poster-ratio: 1402 / 1122;
-            --desktop-poster: url("images/assets/construction-poster.png");
-            --mobile-poster: url("images/assets/construction-poster-mobile.png");
-            --red: #ff1f4f;
-            --blue: #1689ff;
-            --text: #fbfdff;
-            --muted: #c6d0dc;
+            --red: #ff1438;
+            --blue: #087bff;
+            --cyan: #19a7ff;
+            --dark: #02050c;
+            --panel: rgba(255, 255, 255, 0.075);
+            --panel-strong: rgba(255, 255, 255, 0.13);
+            --border: rgba(8, 123, 255, 0.38);
+            --text: #ffffff;
+            --muted: #c7d4e4;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         html,
         body {
@@ -26,227 +33,573 @@
         }
 
         body {
-            display: grid;
-            place-items: center;
             min-height: 100svh;
-            background:
-                linear-gradient(rgba(3, 8, 18, 0.12), rgba(3, 8, 18, 0.12)),
-                var(--desktop-poster) center / cover no-repeat;
-            color: var(--text);
             overflow: hidden;
-            font-family: Arial, Helvetica, sans-serif;
+            overflow-x: hidden;
+            color: var(--text);
+            font-family: "Outfit", Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 8% 18%, rgba(255, 20, 56, 0.52), transparent 30rem),
+                radial-gradient(circle at 92% 18%, rgba(8, 123, 255, 0.62), transparent 34rem),
+                radial-gradient(circle at 84% 82%, rgba(0, 64, 210, 0.44), transparent 38rem),
+                linear-gradient(180deg, #02050c 0%, #00030a 48%, #030711 100%);
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
         }
 
         body::before {
-            content: "";
-            position: fixed;
-            inset: -2rem;
             z-index: -1;
-            display: none;
-            background: inherit;
-            filter: blur(18px) saturate(1.12);
-            transform: scale(1.04);
+            background:
+                linear-gradient(90deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.44) 48%, rgba(0, 0, 0, 0.76)),
+                linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.68) 72%, #02050c 100%);
         }
 
-        .construction-stage {
+        body::after {
+            z-index: 4;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.78);
+        }
+
+        .construction-video {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.54;
+            filter: saturate(1.28) contrast(1.1) brightness(0.82);
+        }
+
+        .page-shell {
             position: relative;
-            width: min(100svw, calc(100svh * var(--poster-ratio)), 1402px);
-            height: min(100svh, calc(100svw / var(--poster-ratio)), 1122px);
-            aspect-ratio: var(--poster-ratio);
-            overflow: hidden;
-            background: transparent;
-        }
-
-        .construction-poster {
-            display: block;
+            z-index: 1;
+            display: grid;
             width: 100%;
-            height: 100%;
-            object-fit: contain;
-            user-select: none;
-            -webkit-user-drag: none;
+            min-height: 100svh;
+            padding: clamp(1rem, 3vw, 2rem);
         }
 
-        .construction-stage > picture {
-            display: block;
-            width: 100%;
-            height: 100%;
+        .construction-card {
+            align-self: center;
+            justify-self: center;
+            width: min(1120px, 100%);
+            min-width: 0;
+            padding: clamp(1.3rem, 4vw, 3rem);
+            border: 1px solid var(--border);
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 20, 56, 0.1) 42%, rgba(8, 123, 255, 0.16)),
+                rgba(2, 5, 12, 0.58);
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.56), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
         }
 
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
+        .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: clamp(1.2rem, 3vw, 2.5rem);
         }
 
-        .hotspot {
-            position: absolute;
-            top: 78.2%;
-            height: 9.6%;
-            z-index: 3;
-            border: 0;
-            outline-offset: 4px;
-            color: transparent;
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.9rem;
+            min-width: 0;
+            color: var(--text);
             text-decoration: none;
         }
 
-        .hotspot:focus-visible {
-            outline: 2px solid var(--text);
+        .brand img {
+            width: clamp(72px, 10vw, 118px);
+            height: clamp(58px, 8vw, 92px);
+            object-fit: contain;
+            filter: drop-shadow(0 0 18px rgba(8, 123, 255, 0.42)) drop-shadow(0 0 18px rgba(255, 20, 56, 0.32));
         }
 
-        .hotspot-call {
-            left: 24.4%;
-            width: 24.2%;
+        .brand-copy {
+            display: grid;
+            gap: 0.16rem;
         }
 
-        .hotspot-email {
-            left: 51.3%;
-            width: 24.4%;
+        .brand-name {
+            font-family: "Bebas Neue", sans-serif;
+            font-size: clamp(1.7rem, 4vw, 3rem);
+            line-height: 0.92;
+            letter-spacing: 0;
         }
 
-        .bottom-text-sheen {
-            position: absolute;
-            left: 8%;
-            right: 8%;
-            bottom: 2.2%;
-            z-index: 1;
-            height: 10.6%;
-            overflow: hidden;
-            pointer-events: none;
-            mix-blend-mode: screen;
-            opacity: 0.95;
+        .brand-subtitle {
+            color: var(--muted);
+            font-family: "Space Mono", monospace;
+            font-size: clamp(0.68rem, 1.2vw, 0.86rem);
+            text-transform: uppercase;
         }
 
-        .bottom-text-sheen::before {
-            content: "";
-            position: absolute;
-            top: 5%;
-            bottom: 8%;
-            left: -35%;
-            right: -35%;
-            background: linear-gradient(105deg,
-                transparent 0%,
-                rgba(255, 31, 79, 0) 39%,
-                rgba(255, 31, 79, 0.34) 46%,
-                rgba(255, 255, 255, 0.66) 50%,
-                rgba(22, 137, 255, 0.4) 54%,
-                rgba(22, 137, 255, 0) 61%,
-                transparent 100%);
-            filter: blur(0.5px);
-            transform: translateX(-70%) skewX(-14deg);
-            animation: bottomTextSheen 4.8s ease-in-out infinite;
+        .status-pill {
+            flex: 0 0 auto;
+            padding: 0.55rem 0.85rem;
+            border: 1px solid rgba(255, 20, 56, 0.54);
+            background: linear-gradient(135deg, rgba(255, 20, 56, 0.2), rgba(8, 123, 255, 0.14), rgba(255, 255, 255, 0.06));
+            color: #fbfdff;
+            font-family: "Space Mono", monospace;
+            font-size: clamp(0.62rem, 1vw, 0.78rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
 
-        .bottom-text-sheen::after {
-            content: "";
-            position: absolute;
-            inset: 20% 0 8%;
+        .hero-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.12fr) minmax(280px, 0.88fr);
+            gap: clamp(1.2rem, 4vw, 3rem);
+            align-items: center;
+        }
+
+        .hero-copy {
+            display: grid;
+            gap: clamp(1rem, 2vw, 1.4rem);
+        }
+
+        h1 {
+            margin: 0;
+            font-family: "Bebas Neue", sans-serif;
+            font-size: clamp(4rem, 10vw, 8rem);
+            line-height: 0.86;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        h1 span {
+            display: block;
+        }
+
+        h1 .line-two {
+            background: linear-gradient(90deg, var(--red), #9d63ff 32%, var(--blue) 72%, var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 22px rgba(8, 123, 255, 0.18));
+        }
+
+        .message {
+            max-width: 650px;
+            margin: 0;
+            color: var(--muted);
+            font-size: clamp(1.04rem, 2vw, 1.32rem);
+            line-height: 1.58;
+        }
+
+        .message strong {
+            color: var(--blue);
+            font-weight: 800;
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 54px;
+            padding: 0 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #fbfdff;
+            text-decoration: none;
+            font-family: "Space Mono", monospace;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, rgba(255, 20, 56, 0.98), rgba(38, 10, 24, 0.95) 50%, rgba(8, 123, 255, 0.95));
+            box-shadow: 0 14px 36px rgba(255, 20, 56, 0.28), 0 0 30px rgba(8, 123, 255, 0.18);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .action-button:hover,
+        .action-button:focus-visible {
+            transform: translateY(-2px);
+            border-color: rgba(8, 123, 255, 0.72);
+            box-shadow: 0 18px 42px rgba(255, 20, 56, 0.42), 0 0 38px rgba(8, 123, 255, 0.32);
+        }
+
+        .action-button.secondary {
+            background: rgba(2, 5, 12, 0.62);
+            border-color: rgba(8, 123, 255, 0.6);
+        }
+
+        .signal-panel {
+            display: grid;
+            gap: 1rem;
+            padding: clamp(1rem, 2vw, 1.5rem);
+            border: 1px solid rgba(8, 123, 255, 0.38);
             background:
-                radial-gradient(circle at 17% 52%, rgba(255, 31, 79, 0.4), transparent 12%),
-                radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.22), transparent 14%),
-                radial-gradient(circle at 82% 52%, rgba(22, 137, 255, 0.38), transparent 14%);
-            animation: bottomTextPulse 2.8s ease-in-out infinite alternate;
+                linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(8, 123, 255, 0.11)),
+                rgba(2, 5, 12, 0.56);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 50px rgba(0, 0, 0, 0.38);
         }
 
-        @keyframes bottomTextSheen {
-            0%,
-            18% {
-                transform: translateX(-78%) skewX(-14deg);
-            }
-
-            60%,
-            100% {
-                transform: translateX(78%) skewX(-14deg);
-            }
+        .signal-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.85rem;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.055);
         }
 
-        @keyframes bottomTextPulse {
+        .signal-icon {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            font-weight: 900;
+            background: linear-gradient(135deg, rgba(255, 20, 56, 0.74), rgba(8, 123, 255, 0.7));
+        }
+
+        .signal-label {
+            margin: 0 0 0.25rem;
+            color: #ffffff;
+            font-family: "Space Mono", monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .signal-text {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .bottom-strip {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1px;
+            margin-top: clamp(1.4rem, 3vw, 2.3rem);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.12);
+            overflow: hidden;
+        }
+
+        .strip-item {
+            min-height: 78px;
+            padding: 1rem;
+            background: rgba(2, 5, 12, 0.7);
+            color: #ffffff;
+            font-family: "Space Mono", monospace;
+            font-size: clamp(0.66rem, 1vw, 0.78rem);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .strip-item span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(90deg, var(--red), var(--blue));
+            animation: linePulse 2.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes linePulse {
             from {
-                opacity: 0.35;
+                opacity: 0.42;
+                transform: scaleX(0.68);
+                transform-origin: left;
             }
 
             to {
-                opacity: 0.85;
-            }
-        }
-
-        @media (max-aspect-ratio: 1402 / 1122) {
-            .construction-stage {
-                width: min(100svw, calc(100svh * var(--poster-ratio)));
-                height: min(100svh, calc(100svw / var(--poster-ratio)));
+                opacity: 1;
+                transform: scaleX(1);
+                transform-origin: left;
             }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .bottom-text-sheen::before,
-            .bottom-text-sheen::after {
+            .strip-item span {
                 animation: none;
             }
         }
 
-        @media (max-width: 700px) {
-            :root {
-                --poster-ratio: 941 / 1672;
-            }
-
+        @media (max-width: 860px) {
             body {
+                overflow: auto;
+            }
+
+            .page-shell {
+                min-height: 100svh;
+                padding: 0.75rem;
+                align-items: stretch;
+            }
+
+            .construction-card {
+                align-self: stretch;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: clamp(0.9rem, 4vw, 1.2rem);
+                border-color: rgba(8, 123, 255, 0.48);
                 background:
-                    linear-gradient(rgba(3, 8, 18, 0.08), rgba(3, 8, 18, 0.08)),
-                    var(--mobile-poster) center / cover no-repeat;
-                overflow: hidden;
-                align-items: center;
+                    linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(255, 20, 56, 0.12) 38%, rgba(8, 123, 255, 0.18)),
+                    rgba(2, 5, 12, 0.68);
             }
 
-            .construction-stage {
-                width: min(100svw, calc(100svh * var(--poster-ratio)));
-                height: min(100svh, calc(100svw / var(--poster-ratio)));
+            .top-row {
+                align-items: flex-start;
+                margin-bottom: clamp(1rem, 5vw, 1.6rem);
             }
 
-            .hotspot {
-                top: 69.2%;
-                height: 6.7%;
+            .hero-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
-            .hotspot-call {
-                left: 12.4%;
-                width: 33.4%;
+            h1 {
+                font-size: clamp(3.3rem, 18vw, 5.8rem);
+                line-height: 0.84;
             }
 
-            .hotspot-email {
-                left: 49.4%;
-                width: 33.6%;
+            .message {
+                font-size: 1.02rem;
+                line-height: 1.5;
             }
 
-            .bottom-text-sheen {
-                left: 7%;
-                right: 7%;
-                bottom: 1.9%;
-                height: 8.5%;
+            .signal-panel {
+                padding: 0.75rem;
+                gap: 0.65rem;
+            }
+
+            .signal-item {
+                padding: 0.8rem;
+                gap: 0.68rem;
+            }
+
+            .signal-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 0.82rem;
+            }
+
+            .bottom-strip {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                margin-top: 1rem;
+            }
+
+            .strip-item {
+                min-height: 62px;
+                padding: 0.78rem;
+            }
+        }
+
+        @media (max-width: 560px) {
+            body::after {
+                box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.84);
+            }
+
+            .construction-video {
+                opacity: 0.48;
+                object-position: center;
+            }
+
+            .page-shell {
+                padding: 0;
+            }
+
+            .construction-card {
+                width: 100%;
+                min-height: 100svh;
+                border-width: 0;
+                padding: clamp(1rem, 5vw, 1.35rem);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+
+            .top-row {
+                display: grid;
+                gap: 0.85rem;
+            }
+
+            .brand {
+                gap: 0.7rem;
+            }
+
+            .brand img {
+                width: 78px;
+                height: 64px;
+            }
+
+            .brand-name {
+                font-size: 2rem;
+            }
+
+            .brand-subtitle {
+                font-size: 0.68rem;
+            }
+
+            .status-pill {
+                justify-self: start;
+                max-width: 100%;
+                font-size: 0.64rem;
+            }
+
+            .hero-copy {
+                gap: 0.85rem;
+            }
+
+            h1 {
+                font-size: clamp(2.9rem, 17vw, 4.2rem);
+            }
+
+            .message {
+                max-width: 24rem;
+                font-size: 0.98rem;
+            }
+
+            .action-row {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 0.62rem;
+            }
+
+            .action-button {
+                width: 100%;
+                min-height: 50px;
+                padding: 0 1rem;
+            }
+
+            .signal-panel {
+                margin-top: 0.2rem;
+                border-color: rgba(255, 255, 255, 0.14);
+                background: rgba(2, 5, 12, 0.5);
+            }
+
+            .signal-item {
+                grid-template-columns: 1fr;
+            }
+
+            .signal-icon {
+                display: none;
+            }
+
+            .signal-label {
+                font-size: 0.68rem;
+            }
+
+            .signal-text {
+                font-size: 0.92rem;
+            }
+
+            .bottom-strip {
+                grid-template-columns: 1fr;
+                margin-top: 0.8rem;
+            }
+
+            .strip-item {
+                min-height: auto;
+                padding: 0.62rem 0.78rem;
+                font-size: 0.66rem;
+            }
+
+            .strip-item span {
+                display: inline-block;
+                margin: 0 0.55rem 0 0;
+                vertical-align: middle;
             }
         }
     </style>
 </head>
 <body>
-    <main class="construction-stage" aria-labelledby="construction-title">
-        <picture>
-            <source media="(max-width: 700px)" srcset="images/assets/construction-poster-mobile.png">
-            <img class="construction-poster" src="images/assets/construction-poster.png" alt="" aria-hidden="true">
-        </picture>
-        <div class="sr-only">
-            <h1 id="construction-title">Site Under Construction</h1>
-            <p>We are finishing up the new site. You can still call or email Detail Dogs LLC to book service or ask a question.</p>
-        </div>
-        <a class="hotspot hotspot-call" href="tel:+14849260606">Call Now</a>
-        <a class="hotspot hotspot-email" href="mailto:detaildogsllc@gmail.com?subject=Detail%20Dogs%20Service%20Request">Email Us</a>
-        <div class="bottom-text-sheen" aria-hidden="true"></div>
+    <video class="construction-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+        <source src="/images/assets/detail-dogs-hero-background.mp4" type="video/mp4">
+    </video>
+
+    <main class="page-shell" aria-labelledby="construction-title">
+        <section class="construction-card">
+            <div class="top-row">
+                <a class="brand" href="/construction" aria-label="Detail Dogs construction page">
+                    <img src="/images/assets/detail-dogs-header-logo.png" alt="Detail Dogs Professional Services">
+                    <span class="brand-copy">
+                        <span class="brand-name">Detail Dogs</span>
+                        <span class="brand-subtitle">Professional Services</span>
+                    </span>
+                </a>
+                <div class="status-pill">Website refresh in progress</div>
+            </div>
+
+            <div class="hero-layout">
+                <div class="hero-copy">
+                    <h1 id="construction-title">
+                        <span>Site Under</span>
+                        <span class="line-two">Construction</span>
+                    </h1>
+                    <p class="message">We are tightening up the new Detail Dogs site. You can still call, email, or follow <strong>Detail Dogs LLC</strong> to book service and see fresh work.</p>
+                    <div class="action-row" aria-label="Contact Detail Dogs">
+                        <a class="action-button" href="tel:+14849260606">Call Now</a>
+                        <a class="action-button secondary" href="mailto:detaildogsllc@gmail.com?subject=Detail%20Dogs%20Service%20Request">Email Us</a>
+                        <a class="action-button secondary" href="https://www.instagram.com/detail.dogs/" target="_blank" rel="noopener">Instagram</a>
+                    </div>
+                </div>
+
+                <aside class="signal-panel" aria-label="Detail Dogs service highlights">
+                    <div class="signal-item">
+                        <div class="signal-icon">01</div>
+                        <div>
+                            <p class="signal-label">Premium Detailing</p>
+                            <p class="signal-text">Interior resets, exterior washes, paint correction, and protection services.</p>
+                        </div>
+                    </div>
+                    <div class="signal-item">
+                        <div class="signal-icon">02</div>
+                        <div>
+                            <p class="signal-label">Book While We Build</p>
+                            <p class="signal-text">The site is paused for visitors, but calls and emails still go straight through.</p>
+                        </div>
+                    </div>
+                    <div class="signal-item">
+                        <div class="signal-icon">03</div>
+                        <div>
+                            <p class="signal-label">Follow The Work</p>
+                            <p class="signal-text">Instagram stays active with recent details, transformations, and updates.</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="bottom-strip" aria-hidden="true">
+                <div class="strip-item"><span></span>Premium Detailing</div>
+                <div class="strip-item"><span></span>Quality You Can See</div>
+                <div class="strip-item"><span></span>Passion For Perfection</div>
+                <div class="strip-item"><span></span>Driven By Excellence</div>
+            </div>
+        </section>
     </main>
+
     <script>
         (() => {
+            const backgroundVideo = document.querySelector('.construction-video');
+            if (backgroundVideo) {
+                const slowBackgroundVideo = () => {
+                    backgroundVideo.playbackRate = 0.65;
+                };
+
+                slowBackgroundVideo();
+                backgroundVideo.addEventListener('loadedmetadata', slowBackgroundVideo, { once: true });
+            }
+
             const devTarget = `/dev-tools?target=${encodeURIComponent('/')}`;
             let cornerTapCount = 0;
             let cornerTapTimer = 0;
